@@ -16,7 +16,7 @@ public class CheckUserInfoTest {
             e.printStackTrace();
         }
     }
-
+//
     private static void testCheckUser() throws Exception {
         System.out.println("Testing Check User Info API...");
 
