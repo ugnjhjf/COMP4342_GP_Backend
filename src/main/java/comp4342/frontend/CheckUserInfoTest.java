@@ -20,7 +20,7 @@ public class CheckUserInfoTest {
     private static void testCheckUser() throws Exception {
         System.out.println("Testing Check User Info API...");
 
-        // 构建URL对象，指定 API 的路径
+        // 构建 URL 对象，指定 API 的路径
         URL url = new URL(BASE_URL + "/checkUserInfo");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
@@ -31,7 +31,8 @@ public class CheckUserInfoTest {
         connection.setDoOutput(true);
 
         // 创建 JSON 格式的请求体（包含 user_id）
-        String jsonInputString = "{\"user_id\":1}";
+        String jsonInputString = "{\"uid\":1}";
+        System.out.println("Sending JSON: " + jsonInputString);  // 打印发送的 JSON 数据
 
         // 发送请求体
         try (OutputStream os = connection.getOutputStream()) {
@@ -47,7 +48,7 @@ public class CheckUserInfoTest {
         try (InputStream is = connection.getInputStream()) {
             byte[] responseBytes = is.readAllBytes();
             String response = new String(responseBytes, "utf-8");
-            System.out.println("Response: " + response);
+            System.out.println("Received JSON: " + response);  // 打印接收到的 JSON 数据
         }
     }
 }

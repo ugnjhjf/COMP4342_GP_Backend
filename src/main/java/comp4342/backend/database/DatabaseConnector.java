@@ -18,7 +18,7 @@ public class DatabaseConnector {
     public boolean connectDB() throws ClassNotFoundException {
         Class.forName("com.mysql.cj.jdbc.Driver");
 
-        String url = "jdbc:mysql://www.gnetwork.space/chat_app?useUnicode=true&characterEncoding=utf-8&connectTimeout=10000&socketTimeout=10000";
+        String url = "jdbc:mysql://www.gnetwork.space/chat_app?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&connectTimeout=3000&socketTimeout=3000";
         String username = "root";
         String password = "SecretDB";
         try {

@@ -1,5 +1,7 @@
 package comp4342.backend.database;
 
+import org.json.JSONObject;
+
 import java.sql.*;
 
 public class DatabaseOperator {
@@ -16,18 +18,27 @@ public class DatabaseOperator {
         return resultSet;
     }
 
-    public boolean checkUserInfo(int user_id) {
+    public JSONObject checkUserInfo(int user_id) {
         String sql = "SELECT * FROM user WHERE uid = ?";
+        JSONObject userJson = new JSONObject();  // 创建一个 JSONObject 用于存放返回的数据
         try (Connection connection = databaseConnector.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            stmt.setInt(1, user_id);  // 为占位符设置参数
-            resultSet = stmt.executeQuery();  // 直接执行查询，无需传入 SQL 字符串
+            stmt.setInt(1, user_id);
+            ResultSet resultSet = stmt.executeQuery();  // 执行查询
 
-            return resultSet.next();  // 检查是否有结果返回，若有则返回 true
+            if (resultSet.next()) {  // 判断是否有结果
+                userJson.put("uid", resultSet.getInt("uid"));
+                userJson.put("uname", resultSet.getString("uname"));
+                userJson.put("email", resultSet.getString("email"));
+                // 添加其他字段到 JSON 中
+                return userJson;  // 成功返回数据
+            } else {
+                return null;  // 如果没有数据则返回 null
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 
