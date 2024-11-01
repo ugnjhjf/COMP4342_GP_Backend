@@ -1,0 +1,15 @@
+{
+//Request
+  "uid": "String",
+  "password": "String",
+  "email": "String",
+  "message": "String",
+
+  "newName": "String",
+  "newPassword": "String",
+
+  //Respond
+  "isExecuteSuccess": "Boolean",
+  "error": "String",
+  "result": "JSONObject"
+}

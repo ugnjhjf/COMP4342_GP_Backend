@@ -1,11 +1,11 @@
-package comp4342.frontend;
+package comp4342.frontend.test;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class DatabaseTest {
+public class DatabaseTest2 {
 
     private static final String BASE_URL = "http://localhost:8500/api";
 
