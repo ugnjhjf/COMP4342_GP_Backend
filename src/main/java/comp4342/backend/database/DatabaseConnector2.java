@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class DatabaseConnector2 {
     private Connection connection;
-    public DatabaseConnector() throws ClassNotFoundException {
+    public DatabaseConnector2() throws ClassNotFoundException {
         connectDB();
     }
 
