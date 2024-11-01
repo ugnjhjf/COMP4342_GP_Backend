@@ -18,7 +18,7 @@ public class Conn { // 创建类Conn
 
 
         try { // 通过访问数据库的URL获取数据库连接对象
-            con = DriverManager.getConnection("jdbc:mysql://192.168.31.188:3306/chat_app?useUnicode=true&characterEncoding=utf-8", user, password);
+            con = DriverManager.getConnection("jdbc:mysql://www.gnetwork.space:3306/chat_app?useUnicode=true&characterEncoding=utf-8", user, password);
             System.out.println("数据库连接成功");
         } catch (SQLException e) {
             e.printStackTrace();

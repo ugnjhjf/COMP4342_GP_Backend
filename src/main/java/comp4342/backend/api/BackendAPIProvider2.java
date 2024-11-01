@@ -6,18 +6,18 @@ import com.sun.net.httpserver.HttpExchange;
 import org.json.JSONObject;
 
 
-import comp4342.backend.database.*;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class BackendAPIProvider {
     private final DatabaseOperator dbOperator;
+    private ResultSet resultSet;
 
-    public BackendAPIProvider(DatabaseOperator dbOperator) {
-        this.dbOperator = dbOperator;
+    public BackendAPIProvider() throws ClassNotFoundException {
+        this.dbOperator = new DatabaseOperator();
     }
 
     public void startServer() throws IOException {
@@ -26,12 +26,40 @@ public class BackendAPIProvider {
         server.createContext("/api/sendMessage", new SendMessageHandler());
         server.createContext("/api/friendList", new FriendListHandler());
         server.createContext("/api/checkUserStatus", new CheckUserStatusHandler());
+        server.createContext("/api/checkUser", new checkUser());
         server.setExecutor(null); // 使用默认的 executor
         server.start();
         System.out.println("Server started on port 8500");
     }
 
-    // 插入新用户的处理程序
+
+    private class checkUser implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if ("POST".equals(exchange.getRequestMethod())) {
+                try {
+                    JSONObject requestBody = new JSONObject(new String(exchange.getRequestBody().readAllBytes()));
+
+                    // 获取 user_id，假设它在JSON中是一个整数
+                    int user_id = requestBody.getInt("user_id");
+
+                    // 检查用户是否存在
+                    boolean execute_result = dbOperator.checkuser(user_id);
+
+                    JSONObject response = new JSONObject();
+                    response.put("success", execute_result);
+                    response.put("result", dbOperator.getResultSet());
+
+                    sendResponse(exchange, response.toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    sendErrorResponse(exchange, "Error processing request");
+                }
+            } else {
+                sendErrorResponse(exchange, "Invalid request method");
+            }
+        }
+    }
     private class InsertUserHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
@@ -147,9 +175,9 @@ public class BackendAPIProvider {
     }
 
     public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException {
-        DatabaseConnector dbConnector = new DatabaseConnector();
-        DatabaseOperator dbOperator = new DatabaseOperator(dbConnector);
-        BackendAPIProvider apiProvider = new BackendAPIProvider(dbOperator);
+//        DatabaseConnector dbConnector = new DatabaseConnector();
+//        DatabaseOperator dbOperator = new DatabaseOperator(dbConnector);
+        BackendAPIProvider apiProvider = new BackendAPIProvider();
         apiProvider.startServer();
     }
 }

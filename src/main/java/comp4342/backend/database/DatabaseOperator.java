@@ -1,15 +1,31 @@
 package comp4342.backend.database;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class DatabaseOperator {
     private DatabaseConnector dbConnector;
+    //        4.执行SQL对象Statement，执行SQL的对象
+    private ResultSet resultSet;
+    public DatabaseOperator() throws ClassNotFoundException {
+        this.dbConnector = new DatabaseConnector();
+    }
 
-    public DatabaseOperator(DatabaseConnector dbConnector) {
-        this.dbConnector = dbConnector;
+    public ResultSet getResultSet() {
+        return resultSet;
+    }
+
+    public boolean checkuser(int user_id) {
+        String sql = "select * from user where uid = ?";
+        try (Connection connection = dbConnector.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+   ;        stmt.setInt(1, user_id);
+            stmt.executeUpdate();
+            resultSet = stmt.executeQuery(sql);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public boolean insertNewUser(String user_name, String email, String password) {
@@ -26,6 +42,7 @@ public class DatabaseOperator {
             return false;
         }
     }
+
 
     public boolean insertNewMessage(int senderId, int receiverId, String content) {
         String sql = "INSERT INTO messages (sender_id, receiver_id, content) VALUES (?, ?, ?)";

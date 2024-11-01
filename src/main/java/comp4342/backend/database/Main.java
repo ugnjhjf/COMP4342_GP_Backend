@@ -7,7 +7,7 @@ public class Main {
 //        1.加载驱动
         Class.forName("com.mysql.cj.jdbc.Driver");
 //        2.用户信息和url
-        String url = "jdbc:mysql://192.168.31.188:3306/chat_app?useUnicode=true&characterEncoding=utf-8";
+        String url = "jdbc:mysql://www.gnetwork.space/chat_app?useUnicode=true&characterEncoding=utf-8&connectTimeout=3000&socketTimeout=3000";
         String username="root";
         String password="SecretDB";
 //        3.连接成功，数据库对象 Connection
