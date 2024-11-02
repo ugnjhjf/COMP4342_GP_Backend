@@ -51,33 +51,18 @@ public class DatabaseOperator {
             return null;
         }
     }
+    public JSONObject changeName(int uid,String newName) throws SQLException {
+        sql = "UPDATE user SET uname = ? WHERE uid = ?;";
+        try {
+            stmt = databaseConnector.getConnection().prepareStatement(sql);
+            stmt.setString(1, newName);
+            stmt.setInt(2, uid);
+            stmt.executeUpdate();  // 执行更新
+            return resultJson;  // 成功返回数据
 
-//Update Sample
-//    public boolean changeName(int userId, String newName) {
-//        String sql = "UPDATE user SET uname = ? WHERE uid = ?";
-//        try (Connection connection = dbConnector.getConnection();
-//             PreparedStatement stmt = connection.prepareStatement(sql)) {
-//            stmt.setString(1, newName);
-//            stmt.setInt(2, userId);
-//            stmt.executeUpdate();
-//            return true;
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
-   //Query Sample
-
-//    public ResultSet checkFriendList(int userId) {
-//        String sql = "SELECT friend_id FROM friends WHERE user_id = ?";
-//        try {
-//            Connection connection = dbConnector.getConnection();
-//            PreparedStatement stmt = connection.prepareStatement(sql);
-//            stmt.setInt(1, userId);
-//            return stmt.executeQuery();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
