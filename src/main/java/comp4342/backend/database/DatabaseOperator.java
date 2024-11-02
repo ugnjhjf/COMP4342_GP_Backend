@@ -31,14 +31,9 @@ public class DatabaseOperator {
 
     public JSONObject checkUserInfo(int uid) throws SQLException {
         sql = "select * from user where uid = ?;";
-        try{
+        try {
             stmt = databaseConnector.getConnection().prepareStatement(sql);
             stmt.setInt(1, uid);
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
-
-        try{
             ResultSet resultSet = stmt.executeQuery();  // 执行查询
 
             if (resultSet.next()) {  // 判断是否有结果
@@ -48,9 +43,10 @@ public class DatabaseOperator {
                 // 添加其他字段到 JSON 中
                 return resultJson;  // 成功返回数据
             } else {
-                return null;  // 如果没有数据则返回 null
+                return null;
             }
-        } catch (SQLException e) {
+        }
+            catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
