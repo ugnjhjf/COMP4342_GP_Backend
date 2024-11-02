@@ -1,5 +1,3 @@
-package comp4342.frontend;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
