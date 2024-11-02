@@ -6,6 +6,7 @@ import java.sql.*;
 
 public class DatabaseOperator {
     private DatabaseConnector databaseConnector;
+    private Connection connection;
     private ResultSet resultSet;
 
     //Establish connection to the database
@@ -18,29 +19,28 @@ public class DatabaseOperator {
         return resultSet;
     }
 
-    public JSONObject checkUserInfo(int user_id) {
-        String sql = "SELECT * FROM user WHERE uid = ?";
-        JSONObject userJson = new JSONObject();  // 创建一个 JSONObject 用于存放返回的数据
-        try (Connection connection = databaseConnector.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql)) {
-
-            stmt.setInt(1, user_id);
-            ResultSet resultSet = stmt.executeQuery();  // 执行查询
-
-            if (resultSet.next()) {  // 判断是否有结果
-                userJson.put("uid", resultSet.getInt("uid"));
-                userJson.put("uname", resultSet.getString("uname"));
-                userJson.put("email", resultSet.getString("email"));
-                // 添加其他字段到 JSON 中
-                return userJson;  // 成功返回数据
-            } else {
-                return null;  // 如果没有数据则返回 null
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+//    public JSONObject checkUserInfo(int user_id) {
+//        String sql = "SELECT * FROM user WHERE uid = ?";
+//        JSONObject userJson = new JSONObject();  // 创建一个 JSONObject 用于存放返回的数据
+//        try (Connection connection = databaseConnector.getConnection();
+//
+//            stmt.setInt(1, user_id);
+//            ResultSet resultSet = stmt.executeQuery(sql);  // 执行查询
+//
+//            if (resultSet.next()) {  // 判断是否有结果
+//                userJson.put("uid", resultSet.getInt("uid"));
+//                userJson.put("uname", resultSet.getString("uname"));
+//                userJson.put("email", resultSet.getString("email"));
+//                // 添加其他字段到 JSON 中
+//                return userJson;  // 成功返回数据
+//            } else {
+//                return null;  // 如果没有数据则返回 null
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
 
 //Update Sample
 //    public boolean changeName(int userId, String newName) {
