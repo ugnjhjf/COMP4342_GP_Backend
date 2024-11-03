@@ -63,14 +63,14 @@ public class DatabaseOperator {
         return java.util.UUID.randomUUID().toString();
     }
     public boolean insertRegister(String uname, String email, String password) {
-        sql = "INSERT INTO user (uid, uname, email, password) VALUES (?, ?, ?, ?, DEFAULT, DEFAULT);";
+        sql = "INSERT INTO user (uid, uname, email, password) VALUES (?, ?, ?, ?);";
         try {
             stmt = databaseConnector.getConnection().prepareStatement(sql);
             stmt.setString(1, generateUID());
             stmt.setString(2, uname);
             stmt.setString(3, email);
             stmt.setString(4, password);
-            System.out.println("Insert result: "+stmt.toString());
+            System.out.println("Insert result: " + stmt.toString());
             stmt.executeUpdate();  // 执行更新
             return true;
         } catch (SQLException e) {

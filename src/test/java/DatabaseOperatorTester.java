@@ -47,8 +47,9 @@ public class DatabaseOperatorTester {
     public static DatabaseOperator databaseOperator;
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
         databaseOperator = new DatabaseOperator();
-        testCheckUserInfo();
-        testChangeName();
+        testinsertRegisterUser();
+//        testCheckUserInfo();
+//        testChangeName();
     }
     public static void testCheckUserInfo() throws SQLException {
 
@@ -58,6 +59,13 @@ public class DatabaseOperatorTester {
             System.out.println(resultJSON.toString());
         }
 //        改名测试：uid=2，megumi -> rokishi
+    }
+    public static void testinsertRegisterUser() {
+        String uname = "test";
+        String email = "tester@gmail.com";
+        String password = "123456";
+        boolean result = databaseOperator.insertRegister(uname, email, password);
+        System.out.println("Insert result: " + result);
     }
     
     public static void testChangeName() throws SQLException {
