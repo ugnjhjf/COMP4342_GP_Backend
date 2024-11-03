@@ -40,7 +40,7 @@ public class BackendAPIProvider {
             if ("POST".equals(exchange.getRequestMethod())) {
                 try {
                     JSONObject requestBody = new JSONObject(new String(exchange.getRequestBody().readAllBytes()));
-                    int uid = requestBody.getInt("uid");
+                    String uid = requestBody.getString("uid");
 
                     JSONObject userInfo = dbOperator.checkUserInfo(uid);  // 获取用户信息
 

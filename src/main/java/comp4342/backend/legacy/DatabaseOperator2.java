@@ -1,4 +1,6 @@
-package comp4342.backend.database;
+package comp4342.backend.legacy;
+
+import comp4342.backend.database.DatabaseConnector;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
