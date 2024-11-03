@@ -1,4 +1,4 @@
-package comp4342.frontend;
+package comp4342.frontend.legacy;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;

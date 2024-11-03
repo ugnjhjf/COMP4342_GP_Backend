@@ -47,33 +47,43 @@ public class DatabaseOperatorTester {
     public static DatabaseOperator databaseOperator;
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
         databaseOperator = new DatabaseOperator();
-        testinsertRegisterUser();
+//   testinsertRegisterUser();
+        testlogin();
 //        testCheckUserInfo();
 //        testChangeName();
     }
-    public static void testCheckUserInfo() throws SQLException {
-
-// 用户查询测试：uid=1，echidna
-        JSONObject resultJSON = databaseOperator.checkUserInfo(1);
-        if (resultJSON != null) {
-            System.out.println(resultJSON.toString());
-        }
-//        改名测试：uid=2，megumi -> rokishi
-    }
+//    public static void testCheckUserInfo() throws SQLException {
+//
+//// 用户查询测试：uid=1，echidna
+//        JSONObject resultJSON = databaseOperator.checkUserInfo("");
+//        if (resultJSON != null) {
+//            System.out.println(resultJSON.toString());
+//        }
+////        改名测试：uid=2，megumi -> rokishi
+//    }
     public static void testinsertRegisterUser() {
-        String uname = "test";
-        String email = "tester@gmail.com";
-        String password = "123456";
-        boolean result = databaseOperator.insertRegister(uname, email, password);
-        System.out.println("Insert result: " + result);
+            String uname = "kurumi" ;
+            String email = "kurumi2@gmail.com";
+            String password = "123456";
+            boolean result = databaseOperator.insertRegister(uname, email, password);
+            System.out.println("Insert result: " + result);
     }
-    
-    public static void testChangeName() throws SQLException {
-        JSONObject resultJSON = databaseOperator.checkUserInfo(2);
-        if (resultJSON!=null) {System.out.println(resultJSON.toString());}
 
-        boolean resultJSON2 =  databaseOperator.changeName(2,"rokishi");
-        System.out.println("Change result: "+resultJSON2);
+    
+//    public static void testChangeName() throws SQLException {
+//        JSONObject resultJSON = databaseOperator.checkUserInfo();
+//        if (resultJSON!=null) {System.out.println(resultJSON.toString());}
+//
+//        boolean resultJSON2 =  databaseOperator.changeName(2,"rokishi");
+//        System.out.println("Change result: "+resultJSON2);
+//    }
+    public static void testlogin() throws SQLException{
+        JSONObject resultJSON = databaseOperator.login("kurumi2@gmail.com","12345a6");
+        if (resultJSON.getBoolean("isLogonSucessful")){
+            System.out.println("Hello!"+resultJSON.getString("uname"));
+        }else{
+            System.out.println("Incorrect password / User not exist");
+        }
     }
 }
 

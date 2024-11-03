@@ -1,4 +1,4 @@
-package comp4342.backend.database;
+package comp4342.backend.legacy;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -23,12 +23,12 @@ public class DatabaseOperator {
         System.out.println("(Database Operator)Database connected: " + databaseConnector.getConnection());
     }
 
-    public JSONObject checkUserInfo(int uid) throws SQLException {
+    public JSONObject checkUserInfo(String uid) throws SQLException {
         sql = "select * from user where uid = ?;";
         try {
             stmt = databaseConnector.getConnection().prepareStatement(sql);
-            stmt.setInt(1, uid);
-            ResultSet resultSet = stmt.executeQuery();  // 执行查询
+            stmt.setString(1, uid);
+            resultSet = stmt.executeQuery();  // 执行查询
 
             if (resultSet.next()) {  // 判断是否有结果
                 resultJson.put("uid", resultSet.getInt("uid"));
@@ -76,6 +76,29 @@ public class DatabaseOperator {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public JSONObject login(String email,String password){
+        sql = "SELECT uid,uname FROM user where email = ? AND password = ?;";
+        try{
+            stmt = databaseConnector.getConnection().prepareStatement(sql);
+            stmt.setString(1,email);
+            stmt.setString(2,password);
+            resultSet = stmt.executeQuery();  // 执行查询
+            if (resultSet.next()) {  // 判断是否有结果
+                resultJson.put("uid", resultSet.getString("uid"));
+                resultJson.put("uname",resultSet.getString("uname"));
+                resultJson.put("isLogonSucessful",true);
+                return resultJson;
+            } else {
+                resultJson.put("isLogonSucessful",false);
+                return resultJson;
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }
