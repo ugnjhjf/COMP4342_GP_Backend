@@ -61,11 +61,13 @@ public class DatabaseOperatorTester {
 //        改名测试：uid=2，megumi -> rokishi
     }
     public static void testinsertRegisterUser() {
-        String uname = "test";
-        String email = "tester@gmail.com";
-        String password = "123456";
-        boolean result = databaseOperator.insertRegister(uname, email, password);
-        System.out.println("Insert result: " + result);
+        for (int i = 0; i <= 2; i++) {
+            String uname = "test2" + i;
+            String email = "tester" + i + "@gmail.com";
+            String password = "123456"+i;
+            boolean result = databaseOperator.insertRegister(uname, email, password);
+            System.out.println("Insert result: " + result);
+        }
     }
     
     public static void testChangeName() throws SQLException {
