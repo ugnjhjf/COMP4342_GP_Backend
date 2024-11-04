@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Demo</title>
+</head>
+<body>
+<h2>WebSocket 服务器推送演示</h2>
+<div id="messages"></div>
+
+<script>
+    // 创建 WebSocket 连接，ws://localhost:8080/ws 为服务器 WebSocket 地址
+    const socket = new WebSocket("ws://localhost:8080/ws");
+
+    // 连接成功事件
+    socket.onopen = function () {
+        console.log("WebSocket 连接成功");
+    };
+
+    // 接收消息事件
+    socket.onmessage = function (event) {
+        const messagesDiv = document.getElementById("messages");
+        const messageElement = document.createElement("p");
+        messageElement.textContent = "接收到的消息: " + event.data;
+        messagesDiv.appendChild(messageElement);
+    };
+
+    // 关闭连接事件
+    socket.onclose = function () {
+        console.log("WebSocket 连接已关闭");
+    };
+</script>
+</body>
+</html>

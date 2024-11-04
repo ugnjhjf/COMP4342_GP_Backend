@@ -1,6 +1,8 @@
 plugins {
     id 'java'
     id 'application'
+    id 'org.springframework.boot' version '2.7.2' // Spring Boot 插件
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE' // Spring 依赖管理插件
 }
 
 repositories {
@@ -8,8 +10,22 @@ repositories {
 }
 
 dependencies {
+    // JSON 解析依赖
     implementation 'org.json:json:20210307'
-    implementation 'mysql:mysql-connector-java:8.0.33' // MySQL JDBC 驱动
+
+    // MySQL JDBC 驱动
+    implementation 'mysql:mysql-connector-java:8.0.33'
+
+    // Spring Boot Web 和 WebSocket 依赖
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    // 可选：添加 Lombok（如果想简化 Java 代码）
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+    // 测试依赖
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 application {
