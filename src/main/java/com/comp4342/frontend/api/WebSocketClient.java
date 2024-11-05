@@ -1,11 +1,14 @@
 package com.comp4342.frontend.api;
 
 import org.json.JSONObject;
+import org.springframework.messaging.Message;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import javax.websocket.*;
 import java.net.URI;
 
-@ClientEndpoint
+@ClientEndpoint(decoders = MessageDecoder.class)
 public class WebSocketClient {
 
     private Session userSession = null;
@@ -26,7 +29,7 @@ public class WebSocketClient {
     }
 
     @OnMessage
-    public void onMessage(String message) {
+    public void onMessage(TextMessage message) {
         System.out.println("Received response: " + message);
     }
 
@@ -41,18 +44,21 @@ public class WebSocketClient {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         // 连接到 WebSocket 服务器
         WebSocketClient client = new WebSocketClient(URI.create("ws://localhost:8080/ws"));
 
         // 构造 JSON 格式的 `register` 请求
         JSONObject registerRequest = new JSONObject();
         registerRequest.put("action", "register");
-        registerRequest.put("uname", "monika");
-        registerRequest.put("email", "monika@example.com");
+        registerRequest.put("uname", "lad8yg8uyg");
+        registerRequest.put("email", "monika@uvuv.com");
         registerRequest.put("password", "yourMonika");
 
         // 发送 `register` 请求
         client.sendMessage(registerRequest.toString());
+
+        Thread.sleep(1000);
     }
 }
+
