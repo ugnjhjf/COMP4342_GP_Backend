@@ -28,12 +28,12 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         this.databaseOperator = databaseOperator;
     }
 
-    // 启动服务器的 main 方法
+    // 启动服务器
     public static void main(String[] args) {
         SpringApplication.run(BackendAPIProvider.class, args);
     }
 
-    // 配置 WebSocket 处理程序
+    // WebSocket 的路由（访问地址）
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         try {
@@ -56,6 +56,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         try {
             // 从前端解析收到的 JSON
             JSONObject requestJson = new JSONObject(message.getPayload());
+            // 取出action（请求什么指令）
             String action = requestJson.getString("action");
 
             // 解析不同的请求类型，例如登录、注册、检查用户信息等
