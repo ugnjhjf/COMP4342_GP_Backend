@@ -1,10 +1,10 @@
-package comp4342.backend.database;
+package com.comp4342.backend.database;
 
 import org.json.JSONObject;
+import org.springframework.stereotype.Component;
 
 import java.sql.*;
-import java.util.UUID;
-
+@Component
 public class DatabaseOperator {
     private DatabaseConnector databaseConnector;
     //未加参数的SQL

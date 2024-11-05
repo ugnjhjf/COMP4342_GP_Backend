@@ -19,6 +19,8 @@ dependencies {
     // Spring Boot Web 和 WebSocket 依赖
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.java-websocket:Java-WebSocket:1.5.2'
+
 
     // 可选：添加 Lombok（如果想简化 Java 代码）
     compileOnly 'org.projectlombok:lombok:1.18.24'

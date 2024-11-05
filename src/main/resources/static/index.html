@@ -7,6 +7,13 @@
 </head>
 <body>
 <h2>WebSocket 服务器推送演示</h2>
+
+<!-- 输入框和查询按钮 -->
+<label for="userIdInput">输入用户ID:</label>
+<input type="text" id="userIdInput" placeholder="请输入用户ID">
+<button id="queryButton">查询用户信息</button>
+
+<!-- 显示查询结果 -->
 <div id="messages"></div>
 
 <script>
@@ -18,7 +25,7 @@
         console.log("WebSocket 连接成功");
     };
 
-    // 接收消息事件
+    // 接收消息事件，显示后端返回的数据
     socket.onmessage = function (event) {
         const messagesDiv = document.getElementById("messages");
         const messageElement = document.createElement("p");
@@ -30,6 +37,22 @@
     socket.onclose = function () {
         console.log("WebSocket 连接已关闭");
     };
+
+    // 查询按钮点击事件
+    document.getElementById("queryButton").addEventListener("click", function () {
+        const userId = document.getElementById("userIdInput").value;
+        if (userId) {
+            // 创建查询用户信息的 JSON 消息
+            const message = JSON.stringify({
+                action: "checkUserInfo",
+                uid: userId
+            });
+            // 通过 WebSocket 发送消息
+            socket.send(message);
+        } else {
+            alert("请输入用户ID");
+        }
+    });
 </script>
 </body>
 </html>

@@ -15,6 +15,12 @@ public class WebSocketConfig implements WebSocketConfigurer {
         this.webSocketServer = webSocketServer;
     }
 
+    //将 webSocketServer 处理器绑定到指定的路径 /ws。
+    // 这意味着当客户端连接到 ws://yourserver/ws 时，
+    // webSocketServer 将处理该 WebSocket 连接。
+
+    //setAllowedOrigins("*")：允许所有域名连接到此 WebSocket 服务
+    //有点类似HTTP的路由
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(webSocketServer, "/ws").setAllowedOrigins("*");

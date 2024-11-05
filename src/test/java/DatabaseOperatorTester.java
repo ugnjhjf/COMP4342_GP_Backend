@@ -38,7 +38,7 @@
 //
 //}
 //
-import comp4342.backend.database.DatabaseOperator;
+import com.comp4342.backend.database.DatabaseOperator;
 import org.json.JSONObject;
 
 import java.sql.SQLException;

@@ -1,8 +1,11 @@
-package comp4342.backend.database;
+package com.comp4342.backend.database;
+
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+@Component
 
 public class DatabaseConnector {
     private Connection connection;
