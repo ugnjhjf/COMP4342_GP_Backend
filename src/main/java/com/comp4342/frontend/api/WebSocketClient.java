@@ -57,7 +57,7 @@ public class WebSocketClient {
 
         // 发送 `register` 请求
         client.sendMessage(registerRequest.toString());
-
+//
         Thread.sleep(1000);
     }
 }
