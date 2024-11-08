@@ -60,6 +60,29 @@ public class DatabaseOperator {
             return null;
         }
     }
+
+    public JSONObject checkUserInfoByEmail(String email) throws SQLException {
+        sql = "select * from user where email = ?;";
+        try {
+            stmt = databaseConnector.getConnection().prepareStatement(sql);
+            stmt.setString(1, email);
+            resultSet = stmt.executeQuery();  // 执行查询
+
+            if (resultSet.next()) {  // 判断是否有结果
+                resultJson.put("uid", resultSet.getString("uid"));
+                resultJson.put("uname", resultSet.getString("uname"));
+                resultJson.put("email", resultSet.getString("email"));
+                // 添加其他字段到 JSON 中
+                return resultJson;  // 成功返回数据
+            } else {
+                return null;
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     public boolean changeName(int uid,String newName)   {
         sql = "UPDATE user SET uname = ? WHERE uid = ?;";
         try {
@@ -74,6 +97,39 @@ public class DatabaseOperator {
             return false;
         }
     }
+    public boolean insertNewFriend(String uid, String fid, String status){
+        sql = "INSERT INTO friendlist (uid,fid,status) VALUES (?, ?, ?);";
+        try {
+            stmt = databaseConnector.getConnection().prepareStatement(sql);
+            stmt.setString(1, uid);
+            stmt.setString(2, fid);
+            stmt.setString(3, status);
+            stmt.executeUpdate();  // 执行更新
+            return true;
+        }catch (SQLIntegrityConstraintViolationException e){
+            System.out.println("Error: Friend request already send!");
+            return false;
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean updateFriendRequest(String uid, String fid, String status){
+        sql = "UPDATE friendlist SET status = ? WHERE uid = ? AND fid = ?;";
+        try {
+            stmt = databaseConnector.getConnection().prepareStatement(sql);
+            stmt.setString(1, status);
+            stmt.setString(2, uid);
+            stmt.setString(3, fid);
+            stmt.executeUpdate();  // 执行更新
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public String generateUID() {
         return java.util.UUID.randomUUID().toString();
     }

@@ -100,6 +100,8 @@ public class FrontendAPIProvider extends WebSocketClient {
 
             // 示例：发送注册请求
             client.sendRegisterRequest("testUser", "test@example.com", "password123");
+            Thread.sleep(1000);
+
 
         } catch (URISyntaxException | InterruptedException e) {
             e.printStackTrace();

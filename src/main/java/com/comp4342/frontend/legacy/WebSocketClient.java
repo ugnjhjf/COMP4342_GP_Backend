@@ -1,9 +1,8 @@
-package com.comp4342.frontend.api;
+package com.comp4342.frontend.legacy;
 
+import com.comp4342.frontend.api.MessageDecoder;
 import org.json.JSONObject;
-import org.springframework.messaging.Message;
 import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import javax.websocket.*;
 import java.net.URI;

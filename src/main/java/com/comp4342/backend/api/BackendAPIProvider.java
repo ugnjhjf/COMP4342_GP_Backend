@@ -14,7 +14,9 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.util.Calendar;
 
 
 @SpringBootApplication
@@ -32,6 +34,9 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         return new BackendAPIProvider();
     }
 
+    public static void main(String[] args) {
+        SpringApplication.run(BackendAPIProvider.class, args);
+    }
     // 启动服务器
     // 将 WebSocket 处理程序注册为 Spring Bean
 
@@ -51,19 +56,22 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
     }
 
 
-
-
     // 当收到前端 JSON 消息时触发
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
         JSONObject responseJson = new JSONObject();
+
         try {
             // 从前端解析收到的 JSON
             JSONObject requestJson = new JSONObject(message.getPayload());
             // 取出action（请求什么指令）
             String action = requestJson.getString("action");
             //数据库连接判断
-            if(!databaseOperator.isConnectionAlive()){databaseOperator.reconnect();}
+            Calendar now = Calendar.getInstance();
+            System.out.println("[→]REQ: " + action + "  " + "from: " + session.getId() + " Time: " + now.getTime());
+            if (!databaseOperator.isConnectionAlive()) {
+                databaseOperator.reconnect();
+            }
 
             // 解析不同的请求类型，例如登录、注册、检查用户信息等
             switch (action) {
@@ -74,7 +82,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
                     responseJson = handleLogin(requestJson);
                     break;
                 case "checkUserInfo":
-                    responseJson = handleCheckUserInfo(requestJson);
+                    responseJson = handleCheckUserInfoByUID(requestJson);
                     break;
                 case "startConversation":
                     responseJson = handleStartConversation(requestJson);
@@ -89,6 +97,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         }
 
         // 发送响应 JSON 到前端
+        System.out.println("[←]RESPOND: "+ "to: " + session.getId() +" " + responseJson.toString() );
         session.sendMessage(new TextMessage(responseJson.toString()));
     }
 
@@ -113,9 +122,14 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
     }
 
     // 处理检查用户信息请求
-    private JSONObject handleCheckUserInfo(JSONObject requestJson) throws SQLException {
+    private JSONObject handleCheckUserInfoByUID(JSONObject requestJson) throws SQLException {
         String uid = requestJson.getString("uid");
         return databaseOperator.checkUserInfoByUID(uid);
+    }
+
+    private JSONObject handleCheckUserInfoByEmail(JSONObject requestJson) throws SQLException {
+        String email = requestJson.getString("email");
+        return databaseOperator.checkUserInfoByEmail(email);
     }
 
     // 处理开始新会话请求
@@ -128,9 +142,6 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         response.put("action", "startConversation");
         response.put("conversationId", conversationId);
         return response;
-    }
-    public static void main(String[] args) {
-        SpringApplication.run(BackendAPIProvider.class, args);
     }
 
 }

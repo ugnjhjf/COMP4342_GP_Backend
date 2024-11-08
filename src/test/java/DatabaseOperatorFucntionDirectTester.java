@@ -1,71 +1,58 @@
-//import comp4342.backend.database.DatabaseOperator;
-//import org.json.JSONObject;
-//import java.util.UUID;
-//
-//
-//import java.sql.SQLException;
-//
-//public class DatabaseOperatorTester {
-//    private static DatabaseOperator databaseOperator;
-//    public static void main(String[] args) throws ClassNotFoundException, SQLException {
-//        DatabaseOperatorTester tester =  new DatabaseOperatorTester();
-//        tester.testinsertRegisterUser();
-//    }
-//
-//// 用户查询测试：uid=1，echidna
-////    public static void testCheckUserInfo() throws SQLException {
-////        try  {
-////            JSONObject resultJSON = this.databaseOperator.checkUserInfo(1);
-////            if (resultJSON != null) {
-////                System.out.println(resultJSON.toString());
-//////        改名测试：uid=2，megumi -> rokishi
-////            }
-////        }catch (NullPointerException e) {
-////            System.out.println("User not found");
-////        }
-////    }
-//    public void testinsertRegisterUser() {
-//        String uname = "test";
-//        String email = "tester@gmail.com";
-//        String password = "123456";
-//        boolean result =  this.databaseOperator.insertRegister(uname, email, password);
-//        System.out.println("Insert result: " + result);
-//    }
-//    public void testChangeName() {
-//            boolean result = databaseOperator.changeName(2, "rokishi");
-//            System.out.println("Change result: " + result);
-//        }
-//
-//}
-//
 import com.comp4342.backend.database.DatabaseOperator;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
 
-public class DatabaseOperatorTester {
+public class DatabaseOperatorFucntionDirectTester {
     public static DatabaseOperator databaseOperator;
     private static String uid_rokidna = "d96f962d-f8c0-4c8f-b986-b87e9c877462"; //rokidna
     private static String uid_echidna = "1ac162a4-5a24-4058-a3de-5eb0d639a3fb";
+    private static String result;
 
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
         databaseOperator = new DatabaseOperator();
 //        testinsertRegisterUser();
 //        testlogin();
 //        testcheckUserInfoByUID();
-        testinsertStartNewConversation();
-        testSelectExistConversation();
+        testcheckUserInfoByEmail();
+
+        try {
+//            testInsertNewFriend();
+            testUpdateFriendRequest();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+//        testinsertStartNewConversation();
+//        testSelectExistConversation();
 //        testChangeName();
     }
-    public static void testcheckUserInfoByUID() throws SQLException {
-
-// 用户查询测试：uid=1，echidna
-        JSONObject resultJSON = databaseOperator.checkUserInfoByUID(uid_rokidna);
+    public static void testcheckUserInfoByEmail() throws SQLException {
+        JSONObject resultJSON = databaseOperator.checkUserInfoByEmail("monika@uvuv.com");
         if (resultJSON != null) {
             System.out.println(resultJSON.toString());
         }
 //        改名测试：uid=2，megumi -> rokishi
     }
+    public static void testcheckUserInfoByUID() throws SQLException {
+        JSONObject resultJSON = databaseOperator.checkUserInfoByUID(uid_rokidna);
+        if (resultJSON != null) {
+            System.out.println(resultJSON.toString());
+        }
+    }
+    public static void testInsertNewFriend() throws SQLException {
+        String uid = databaseOperator.checkUserInfoByUID(uid_rokidna).getString("uid"); ;
+        String fid = databaseOperator.checkUserInfoByUID(uid_echidna).getString("uid");
+        boolean result = databaseOperator.insertNewFriend(uid, fid, "requested");
+        System.out.println("Insert result: " + result);
+    }
+
+    public static void testUpdateFriendRequest() throws SQLException {
+        String uid = databaseOperator.checkUserInfoByUID(uid_rokidna).getString("uid"); ;
+        String fid = databaseOperator.checkUserInfoByUID(uid_echidna).getString("uid");
+        boolean result = databaseOperator.updateFriendRequest(uid, fid, "accepted");
+        System.out.println("Update result: " + result);
+    }
+
     public static void testinsertRegisterUser() {
             String uname = "rokidna" ;
             String email = "rokidna@gmail.com";
