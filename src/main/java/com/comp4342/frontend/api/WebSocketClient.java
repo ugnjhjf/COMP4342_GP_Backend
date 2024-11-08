@@ -51,9 +51,9 @@ public class WebSocketClient {
         // 构造 JSON 格式的 `register` 请求
         JSONObject registerRequest = new JSONObject();
         registerRequest.put("action", "register");
-        registerRequest.put("uname", "lad8yg8uyg");
-        registerRequest.put("email", "monika@uvuv.com");
-        registerRequest.put("password", "yourMonika");
+        registerRequest.put("uname", "lad8ycg8duyg");
+        registerRequest.put("email", "monikaa@uvdadauv.com");
+        registerRequest.put("password", "yourMaonika");
 
         // 发送 `register` 请求
         client.sendMessage(registerRequest.toString());

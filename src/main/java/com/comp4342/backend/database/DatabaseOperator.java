@@ -1,10 +1,9 @@
 package com.comp4342.backend.database;
 
 import org.json.JSONObject;
-import org.springframework.stereotype.Component;
 
 import java.sql.*;
-@Component
+
 public class DatabaseOperator {
     private DatabaseConnector databaseConnector;
     //未加参数的SQL
@@ -21,9 +20,22 @@ public class DatabaseOperator {
 
     //Establish connection to the database
     public DatabaseOperator() throws ClassNotFoundException {
-        this.databaseConnector = new DatabaseConnector();
-        this.connection = databaseConnector.getConnection();
-        System.out.println("(Database Operator)Database connected: " + databaseConnector.getConnection());
+        if (databaseConnector == null) {
+            this.databaseConnector = new DatabaseConnector();
+            this.connection = databaseConnector.getConnection();
+            System.out.println("(Database Operator)Database connected: " + databaseConnector.getConnection());
+        }
+    }
+    public boolean isConnectionAlive() throws SQLException {
+        return !connection.isClosed();
+    }
+
+    public void reconnect() throws ClassNotFoundException {
+        if (databaseConnector == null) {
+            this.databaseConnector = new DatabaseConnector();
+            this.connection = databaseConnector.getConnection();
+            System.out.println("(Database Operator)Database Reconnected!!!!: " + databaseConnector.getConnection());
+        }
     }
 
     public JSONObject checkUserInfoByUID(String uid) throws SQLException {
@@ -65,7 +77,7 @@ public class DatabaseOperator {
     public String generateUID() {
         return java.util.UUID.randomUUID().toString();
     }
-    public boolean insertRegister(String uname, String email, String password) {
+    public boolean insertRegister(String uname, String email, String password)  {
         sql = "INSERT INTO user (uid, uname, email, password) VALUES (?, ?, ?, ?);";
         try {
             stmt = databaseConnector.getConnection().prepareStatement(sql);
@@ -73,10 +85,13 @@ public class DatabaseOperator {
             stmt.setString(2, uname);
             stmt.setString(3, email);
             stmt.setString(4, password);
-            System.out.println("Insert result: " + stmt.toString());
             stmt.executeUpdate();  // 执行更新
             return true;
-        } catch (SQLException e) {
+        }catch (SQLIntegrityConstraintViolationException e){
+            System.out.println("Error: Duplicate email");
+            return false;
+        }
+        catch (SQLException e) {
             e.printStackTrace();
             return false;
         }

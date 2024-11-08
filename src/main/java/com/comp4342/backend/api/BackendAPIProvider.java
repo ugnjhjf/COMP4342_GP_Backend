@@ -22,32 +22,36 @@ import java.sql.SQLException;
 @EnableWebSocket
 public class BackendAPIProvider extends TextWebSocketHandler implements WebSocketConfigurer {
 
-    private final DatabaseOperator databaseOperator;
+    private DatabaseOperator databaseOperator;
 
-    public BackendAPIProvider(DatabaseOperator databaseOperator) {
-        this.databaseOperator = databaseOperator;
+    public BackendAPIProvider() throws ClassNotFoundException {
+        this.databaseOperator = new DatabaseOperator();
+    }
+
+    public BackendAPIProvider BackendAPIProvider() throws ClassNotFoundException {
+        return new BackendAPIProvider();
     }
 
     // 启动服务器
-    public static void main(String[] args) {
-        SpringApplication.run(BackendAPIProvider.class, args);
-    }
+    // 将 WebSocket 处理程序注册为 Spring Bean
+
 
     // WebSocket 的路由（访问地址）
+//    @Override
+//    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+//        try {
+//            registry.addHandler(new BackendAPIProvider(), "/ws").setAllowedOrigins("*");
+//        } catch (ClassNotFoundException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        try {
-            registry.addHandler(BackendAPIProvider(), "/ws").setAllowedOrigins("*");
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        registry.addHandler(this, "/ws").setAllowedOrigins("*");  // 使用已注入的单例实例
     }
 
-    // 将 WebSocket 处理程序注册为 Spring Bean
-    @Bean
-    public BackendAPIProvider BackendAPIProvider() throws ClassNotFoundException {
-        return new BackendAPIProvider(new DatabaseOperator());
-    }
+
+
 
     // 当收到前端 JSON 消息时触发
     @Override
@@ -58,6 +62,8 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
             JSONObject requestJson = new JSONObject(message.getPayload());
             // 取出action（请求什么指令）
             String action = requestJson.getString("action");
+            //数据库连接判断
+            if(!databaseOperator.isConnectionAlive()){databaseOperator.reconnect();}
 
             // 解析不同的请求类型，例如登录、注册、检查用户信息等
             switch (action) {
@@ -87,7 +93,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
     }
 
     // 处理注册请求
-    private JSONObject handleRegister(JSONObject requestJson) {
+    private JSONObject handleRegister(JSONObject requestJson) throws SQLException {
         String uname = requestJson.getString("uname");
         String email = requestJson.getString("email");
         String password = requestJson.getString("password");
@@ -122,6 +128,9 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         response.put("action", "startConversation");
         response.put("conversationId", conversationId);
         return response;
+    }
+    public static void main(String[] args) {
+        SpringApplication.run(BackendAPIProvider.class, args);
     }
 
 }
