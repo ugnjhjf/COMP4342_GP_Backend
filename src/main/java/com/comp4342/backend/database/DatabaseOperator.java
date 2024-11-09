@@ -37,6 +37,23 @@ public class DatabaseOperator {
             System.out.println("(Database Operator)Database Reconnected!!!!: " + databaseConnector.getConnection());
         }
     }
+    public String checkConversation(String uid, String fid) throws SQLException {
+        sql = "SELECT cid FROM user_conversations where (uid1 = ? AND uid2 = ?) OR (uid1 = ? AND uid2 = ?);";
+        try {
+            stmt = databaseConnector.getConnection().prepareStatement(sql);
+            stmt.setString(1, uid);
+            stmt.setString(2, fid);
+            resultSet = stmt.executeQuery();  // 执行查询
+            if (resultSet.next()) {  // 判断是否有结果
+                return resultSet.getString("cid");
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public JSONObject checkUserInfoByUID(String uid) throws SQLException {
         sql = "select * from user where uid = ?;";
@@ -224,5 +241,21 @@ public class DatabaseOperator {
             e.printStackTrace();
             return null;
         }
+    }
+    public boolean insertNewMessage(String cid, String sid,String content)
+    {
+        sql = "INSERT INTO messages (cid, sid, content) VALUES (?, ?, ?);";
+        try {
+            stmt = databaseConnector.getConnection().prepareStatement(sql);
+            stmt.setString(1, cid);
+            stmt.setString(2, sid);
+            stmt.setString(3, content);
+            stmt.executeUpdate();  // 执行更新
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
     }
 }

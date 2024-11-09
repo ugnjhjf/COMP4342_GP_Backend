@@ -25,6 +25,9 @@ import java.util.Calendar;
 public class BackendAPIProvider extends TextWebSocketHandler implements WebSocketConfigurer {
 
     private DatabaseOperator databaseOperator;
+    private WebSocketSession session;
+    private String action;
+
 
     public BackendAPIProvider() throws ClassNotFoundException {
         this.databaseOperator = new DatabaseOperator();
@@ -42,14 +45,6 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
 
 
     // WebSocket 的路由（访问地址）
-//    @Override
-//    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-//        try {
-//            registry.addHandler(new BackendAPIProvider(), "/ws").setAllowedOrigins("*");
-//        } catch (ClassNotFoundException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(this, "/ws").setAllowedOrigins("*");  // 使用已注入的单例实例
@@ -60,12 +55,13 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
         JSONObject responseJson = new JSONObject();
+        this.session = session;
 
         try {
             // 从前端解析收到的 JSON
             JSONObject requestJson = new JSONObject(message.getPayload());
             // 取出action（请求什么指令）
-            String action = requestJson.getString("action");
+            action = requestJson.getString("action");
             //数据库连接判断
             Calendar now = Calendar.getInstance();
             System.out.println("[→]REQ: " + action + "  " + "from: " + session.getId() + " Time: " + now.getTime());
@@ -87,6 +83,17 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
                 case "startConversation":
                     responseJson = handleStartConversation(requestJson);
                     break;
+                case "sendMeesage":
+                    responseJson = handleSendNewMessage(requestJson);
+                    break;
+                case "getNewMessage":
+                    break;
+                case "checkConversation":
+                    break;
+
+                case "getAllMessage":
+                    break;
+
                 default:
                     responseJson.put("error", "Unknown action");
                     break;
@@ -97,8 +104,28 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         }
 
         // 发送响应 JSON 到前端
+        handleNewMessage(this.action);
         System.out.println("[←]RESPOND: "+ "to: " + session.getId() +" " + responseJson.toString() );
         session.sendMessage(new TextMessage(responseJson.toString()));
+    }
+
+    private JSONObject handleSendNewMessage(JSONObject requestJson) {
+        String uid = requestJson.getString("uid");
+        String content = requestJson.getString("content");
+        String cid = requestJson.getString("fid");
+        Date date = new Date(System.currentTimeMillis());
+        boolean result =  databaseOperator.insertNewMessage(cid, uid, content);
+        JSONObject response = new JSONObject();
+        response.put("action", "sendMeesage");
+        response.put("success", result);
+        return response;
+    }
+    public JSONObject handleCheckConversation(String uid, String fid) throws SQLException {
+        String cid = databaseOperator.checkConversation(uid, fid);
+        JSONObject response = new JSONObject();
+        response.put("action", "checkConversation");
+        response.put("cid", cid);
+        return response;
     }
 
     // 处理注册请求
@@ -144,4 +171,15 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         return response;
     }
 
+    //通知所有客户端有新消息cid, sid, content
+    private void handleNewMessage(String client_action) throws IOException {
+        JSONObject responseJSON = new JSONObject();
+        responseJSON.put("action", "serverPush");
+        responseJSON.put("client_action",client_action);
+        responseJSON.put("uid", "1");
+        responseJSON.put("fid", "2");
+
+        System.out.println("[←]RESPOND: Broadcast new message to ALL clients");
+        this.session.sendMessage(new TextMessage(responseJSON.toString()));
+    }
 }
