@@ -1,5 +1,6 @@
 package com.comp4342.backend.database;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.sql.*;
@@ -55,6 +56,22 @@ public class DatabaseOperator {
         }
     }
 
+    public boolean deleteFriend(String uid,String fid) throws SQLException{
+        sql = "UPDATE friendlist SET status = \"blocked\" WHERE (uid = ? AND fid = ?) OR (uid = ? AND fid = ?);";
+        try {
+            stmt = databaseConnector.getConnection().prepareStatement(sql);
+            stmt.setString(1, uid);
+            stmt.setString(2, fid);
+            stmt.setString(3, fid);
+            stmt.setString(4, uid);
+            stmt.executeUpdate();  // 执行查询
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public JSONObject checkUserInfoByUID(String uid) throws SQLException {
         sql = "select * from user where uid = ?;";
         try {
@@ -100,14 +117,114 @@ public class DatabaseOperator {
             return null;
         }
     }
-    public boolean changeName(int uid,String newName)   {
+
+
+    public JSONArray checkUserFriendlist(String uid) throws SQLException {
+        String sql = "SELECT DISTINCT user.uname, user.uid, friendlist.fid " +
+                "FROM friendlist " +
+                "JOIN user ON ( " +
+                "    (friendlist.uid = ? AND friendlist.fid = user.uid) " +
+                "    OR " +
+                "    (friendlist.fid = ? AND friendlist.uid = user.uid) " +
+                ") " +
+                "WHERE friendlist.status = 'accepted'";
+
+        JSONArray friendsList = new JSONArray();
+
+        try (PreparedStatement stmt = databaseConnector.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, uid);
+            stmt.setString(2, uid);
+
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                while (resultSet.next()) {
+                    // 对于每一条结果，新建一个 JSONObject 并填入数据
+                    JSONObject friend = new JSONObject();
+                    String friendUid = resultSet.getString("uid");
+                    String friendFid = resultSet.getString("fid");
+                    String uname = resultSet.getString("uname");
+
+                    // 确保 friend 的 id 和 uname 正确地分配到 JSON 中
+                    friend.put("fid", uid.equals(friendUid) ? friendFid : friendUid);
+                    friend.put("uname", uname);
+
+                    // 将每个好友的信息添加到 JSONArray 中
+                    friendsList.put(friend);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        // 返回包含所有好友的 JSON 数组
+        return friendsList;
+    }
+
+
+    public boolean checkUserIsOnline(String uid) {
+        sql = "SELECT status FROM user WHERE uid = ?";
+        try (PreparedStatement stmt = databaseConnector.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, uid);
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                if (resultSet.next()) {  // 确保有结果
+                    String status = resultSet.getString("status");
+                    System.out.println("User status: " + status);
+                    // 判断用户状态是否为 "online"
+                    return "online".equalsIgnoreCase(status);
+                } else {
+                    // 用户不存在
+                    System.out.println("User with uid " + uid + " not found.");
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    public boolean checkIsFriend(String uid, String fid) throws SQLException{
+        sql = "select uid,fid from friendlist where ((uid = ? AND fid = ?) OR (uid = ? AND fid = ?)) AND (status = \"accepted\");";
+        try {
+            stmt = databaseConnector.getConnection().prepareStatement(sql);
+            stmt.setString(1, uid);
+            stmt.setString(2, fid);
+            stmt.setString(3, fid);
+            stmt.setString(4, uid);
+            resultSet = stmt.executeQuery();  // 执行查询
+            if (resultSet.next()) {  // 判断是否有结果
+                return true;  // 成功返回数据
+            } else {
+                return false;
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean changePassword(String uid,String newPassword)   {
+        sql = "UPDATE user SET password = ? WHERE uid = ?;";
+        try {
+            stmt = databaseConnector.getConnection().prepareStatement(sql);
+            stmt.setString(1, newPassword);
+            stmt.setString(2, uid);
+            stmt.executeUpdate();  // 执行更新return resultJson;  // 成功返回数据
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean changeName(String uid,String newName)   {
         sql = "UPDATE user SET uname = ? WHERE uid = ?;";
         try {
             stmt = databaseConnector.getConnection().prepareStatement(sql);
             stmt.setString(1, newName);
-            stmt.setInt(2, uid);
+            stmt.setString(2, uid);
             stmt.executeUpdate();  // 执行更新return resultJson;  // 成功返回数据
-            System.out.println("Change result: "+resultJson.toString());
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
