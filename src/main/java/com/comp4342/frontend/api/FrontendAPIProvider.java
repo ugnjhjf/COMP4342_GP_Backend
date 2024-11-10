@@ -75,7 +75,7 @@ public class FrontendAPIProvider extends WebSocketClient {
 
     private void handleStartConversationResponse(JSONObject response) {
         boolean isSuccessful = response.optBoolean("isSuccessful", false);
-        System.out.println("[←][Server] Start conversation result: " + isSuccessful);
+        System.out.println("[-][Client] Start conversation result: " + isSuccessful);
     }
 
 
@@ -94,9 +94,9 @@ public class FrontendAPIProvider extends WebSocketClient {
     private void handleRegisterResponse(JSONObject response) {
         boolean success = response.optBoolean("success", false);
         if (success) {
-            System.out.println("[←][Server] Registration successful.");
+            System.out.println("[-][Client] Registration successful.");
         } else {
-            System.out.println("[←][Server] Registration failed.");
+            System.out.println("[-][Client] Registration failed.");
         }
     }
 
