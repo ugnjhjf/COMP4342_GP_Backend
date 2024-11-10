@@ -53,6 +53,9 @@ public class FrontendAPIProvider extends WebSocketClient {
             case "startConversation":
                 handleStartConversationResponse(response);
                 break;
+            case "sendNewMessage":
+                handleSendNewMessage(response);
+                    break;
 
 
                 //服务器推送给所有客户端
@@ -63,6 +66,11 @@ public class FrontendAPIProvider extends WebSocketClient {
                 System.out.println("Unhandled action: " + action);
                 break;
         }
+    }
+
+    private void handleSendNewMessage(JSONObject response) {
+        boolean isSuccessful = response.optBoolean("isSuccessful", false);
+        System.out.println("Send new message result: " + isSuccessful);
     }
 
     private void handleStartConversationResponse(JSONObject response) {
@@ -96,11 +104,10 @@ public class FrontendAPIProvider extends WebSocketClient {
     public void handleServerPush(JSONObject response) {
         String client_action = response.optString("client_action", "client_action");
         System.out.println("Server push: " + client_action);
-
         //更新查询结果
         switch (client_action) {
-            case "getNewMessage":
-                //To-do: 从response中获取新消息的信息
+            case "sendNewMessage":
+                //To-do: 从服务器更新信息列表
                 break;
             default:
                 System.out.println("Unhandled action: " + client_action);
@@ -131,6 +138,17 @@ public class FrontendAPIProvider extends WebSocketClient {
 
         send(ConversationRequest.toString());  // 发送 JSON 请求
         System.out.println("Sent register request: " + ConversationRequest);
+    }
+
+    public void sendNewMessage(String uid,String fid,String content){
+        JSONObject newMessageRequest = new JSONObject();
+        newMessageRequest.put("action", "sendNewMessage");
+        newMessageRequest.put("uid", uid);
+        newMessageRequest.put("fid", fid);
+        newMessageRequest.put("content", content);
+
+        send(newMessageRequest.toString());
+        System.out.println("Sent new message request: " + newMessageRequest);
     }
 
     //测试发起会话请求

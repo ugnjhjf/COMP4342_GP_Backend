@@ -19,7 +19,10 @@ public class DatabaseOperatorFucntionDirectTester {
 //        testcheckUserInfoByEmail();
 //        testCheckUserIsOnline();
 //        testInsertNewFriend();
-        testCheckUserFriendlist();
+//        testSendNewMessage();
+//        testCheckAllMessage();
+        testcheckLatestMessage();
+//        testCheckUserFriendlist();
 //        try {
 ////            testInsertNewFriend();
 //            testUpdateFriendRequest();
@@ -77,6 +80,19 @@ public class DatabaseOperatorFucntionDirectTester {
             System.out.println(resultJSON.toString());
         }
     }
+    public static void testSendNewMessage() throws SQLException {
+        String uid = uid_echidna;
+        String fid = uid_rokidna;
+        String content = "Hello!";
+        boolean result = databaseOperator.insertNewMessage(uid, fid, content);
+        System.out.println("Send new message result: " + result);
+    }
+    public static void testCheckAllMessage() throws SQLException {
+        JSONArray resultJSON = databaseOperator.checkAllMessage(uid_echidna, uid_rokidna);
+        if (resultJSON != null) {
+            System.out.println(resultJSON.toString());
+        }
+    }
 
     
 //    public static void testChangeName() throws SQLException {
@@ -109,7 +125,12 @@ public class DatabaseOperatorFucntionDirectTester {
         String result = databaseOperator.selectExistConversation(uid1,uid2);
 
         System.out.println("Conversation ID: " + result);
-
+    }
+    public static void testcheckLatestMessage() throws SQLException {
+        String uid = uid_echidna;
+        String fid = uid_rokidna;
+        String result = databaseOperator.checkLatestMessage(uid, fid).toString();
+        System.out.println("Latest message: " + result);
     }
 }
 

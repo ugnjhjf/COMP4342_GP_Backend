@@ -44,6 +44,8 @@ public class DatabaseOperator {
             stmt = databaseConnector.getConnection().prepareStatement(sql);
             stmt.setString(1, uid);
             stmt.setString(2, fid);
+            stmt.setString(3, fid);
+            stmt.setString(4, uid);
             resultSet = stmt.executeQuery();  // 执行查询
             if (resultSet.next()) {  // 判断是否有结果
                 return resultSet.getString("cid");
@@ -204,6 +206,23 @@ public class DatabaseOperator {
             return false;
         }
     }
+    public boolean isPasswordMatch(String uid, String oldPassword){
+        sql = "SELECT uid FROM user WHERE uid = ? AND password = ?;";
+        try {
+            stmt = databaseConnector.getConnection().prepareStatement(sql);
+            stmt.setString(1, uid);
+            stmt.setString(2, oldPassword);
+            resultSet = stmt.executeQuery();  // 执行查询
+            if (resultSet.next()) {  // 判断是否有结果
+                return true;  // 成功返回数据
+            } else {
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
     public boolean changePassword(String uid,String newPassword)   {
         sql = "UPDATE user SET password = ? WHERE uid = ?;";
@@ -359,13 +378,14 @@ public class DatabaseOperator {
             return null;
         }
     }
-    public boolean insertNewMessage(String cid, String sid,String content)
-    {
-        sql = "INSERT INTO messages (cid, sid, content) VALUES (?, ?, ?);";
+    public boolean insertNewMessage(String uid, String fid,String content) throws SQLException {
+
+        String cid = checkConversation(uid, fid);
         try {
+            sql = "INSERT INTO messages (cid, sid, content) VALUES (?, ?, ?);";
             stmt = databaseConnector.getConnection().prepareStatement(sql);
             stmt.setString(1, cid);
-            stmt.setString(2, sid);
+            stmt.setString(2, uid);
             stmt.setString(3, content);
             stmt.executeUpdate();  // 执行更新
             return true;
@@ -374,5 +394,59 @@ public class DatabaseOperator {
             return false;
         }
 
+    }
+    public JSONObject checkLatestMessage(String uid,String fid) throws SQLException{
+        String cid = checkConversation(uid, fid);
+        sql = "SELECT * FROM messages WHERE cid = ? ORDER BY timestamp DESC LIMIT 1;";
+        try {
+            stmt = databaseConnector.getConnection().prepareStatement(sql);
+            stmt.setString(1, cid);
+            resultSet = stmt.executeQuery();  // 执行查询
+            if (resultSet.next()) {  // 判断是否有结果
+                resultJson.put("mid", resultSet.getString("mid"));
+                resultJson.put("cid", resultSet.getString("cid"));
+                resultJson.put("sid", resultSet.getString("sid"));
+                resultJson.put("content", resultSet.getString("content"));
+                resultJson.put("timestamp", resultSet.getString("timestamp"));
+                return resultJson;
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public JSONArray checkAllMessage(String uid, String fid) throws SQLException {
+        String cid = checkConversation(uid, fid);
+        JSONArray messages = new JSONArray();
+        sql = "SELECT * FROM messages WHERE cid = ?;";
+        try (PreparedStatement stmt = databaseConnector.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, cid);
+            try (ResultSet resultSet = stmt.executeQuery()) {
+                while (resultSet.next()) {
+                    // 对于每一条结果，新建一个 JSONObject 并填入数据
+                    JSONObject message = new JSONObject();
+                    String mid = resultSet.getString("mid");
+                    cid = resultSet.getString("cid");
+                    String sid = resultSet.getString("sid");
+                    String content = resultSet.getString("content");
+                    String timestamp = resultSet.getString("timestamp");
+                    message.put("mid", mid);
+                    message.put("cid", cid);
+                    message.put("sid", sid);
+                    message.put("content", content);
+                    message.put("timestamp", timestamp);
+                    // 将每个好友的信息添加到 JSONArray 中
+                    messages.put(message);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+        // 返回包含所有好友的 JSON 数组
+        return messages;
     }
 }
