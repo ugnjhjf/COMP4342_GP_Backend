@@ -1,5 +1,6 @@
 package com.comp4342.backend.database;
 
+import com.mysql.cj.jdbc.exceptions.CommunicationsException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -298,6 +299,10 @@ public class DatabaseOperator {
             return true;
         }catch (SQLIntegrityConstraintViolationException e){
             System.out.println("Error: Duplicate email");
+            return false;
+        }
+        catch(CommunicationsException e){
+            System.out.println("[x←]Client Connection is closed");
             return false;
         }
         catch (SQLException e) {
