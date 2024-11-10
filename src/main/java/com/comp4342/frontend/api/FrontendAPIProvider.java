@@ -50,12 +50,13 @@ public class FrontendAPIProvider extends WebSocketClient {
                 break;
             case "register":
                 handleRegisterResponse(response);
+                break;
             case "startConversation":
                 handleStartConversationResponse(response);
                 break;
             case "sendNewMessage":
                 handleSendNewMessage(response);
-                    break;
+                break;
 
 
                 //服务器推送给所有客户端
