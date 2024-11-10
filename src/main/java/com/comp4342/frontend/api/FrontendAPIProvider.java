@@ -40,7 +40,7 @@ public class FrontendAPIProvider extends WebSocketClient {
     @Override
     public void onMessage(String message) {
         JSONObject response = new JSONObject(message);
-        System.out.println("Received response: " + response);
+        System.out.println("[←][Server] Received response: " + response);
 
         // 根据 action 字段判断响应类型
         String action = response.optString("action", "unknown");
