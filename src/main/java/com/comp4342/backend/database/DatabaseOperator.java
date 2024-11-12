@@ -83,6 +83,8 @@ public class DatabaseOperator {
                 resultJson.put("uid", resultSet.getString("uid"));
                 resultJson.put("uname", resultSet.getString("uname"));
                 resultJson.put("email", resultSet.getString("email"));
+                resultJson.put("action", "getUserInfoByUID");
+                resultJson.put("success", true);
                 // 添加其他字段到 JSON 中
                 return resultJson;  // 成功返回数据
             } else {
@@ -106,7 +108,9 @@ public class DatabaseOperator {
                 resultJson.put("uid", resultSet.getString("uid"));
                 resultJson.put("uname", resultSet.getString("uname"));
                 resultJson.put("email", resultSet.getString("email"));
-                // 添加其他字段到 JSON 中
+                resultJson.put("action", "getUserInfoByEmail");
+                resultJson.put("success", true);
+
                 return resultJson;  // 成功返回数据
             } else {
                 return null;

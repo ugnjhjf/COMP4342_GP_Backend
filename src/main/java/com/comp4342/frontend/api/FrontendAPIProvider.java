@@ -167,6 +167,7 @@ public class FrontendAPIProvider extends WebSocketClient {
 
     private void handleGetUserInfoByUIDResponse(JSONObject response) {
         success = response.optBoolean("success", false);
+        System.out.println("Response: " + response.toString());
         action = response.optString("action");
         uname = response.optString("uname");
         email = response.optString("email");

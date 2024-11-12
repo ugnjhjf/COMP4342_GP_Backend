@@ -32,12 +32,16 @@ public class FrontendAPIProviderTest {
 //        sleep(1000);
 //        testIsFriendRequestAccept();
 
-        //Pass Test↑
-        testDeleteFriend();
-        testChangePassword();
-        testChangeName();
+
+//        testDeleteFriend();
+//        testChangePassword();
+//        testChangeName();
 //        testGetUserInfoByUID();
 //        testGetUserInfoByEmail();
+
+        //Pass Test↑
+
+
 //        testGetUserFriendList();
 //        testIsUserOnline();
 //        testIsFriend();
