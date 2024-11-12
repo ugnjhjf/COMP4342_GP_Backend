@@ -76,7 +76,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
                     break;
 
                 case "getAllMessage":
-                    JSONArray responseArrayJSON = handleGetAllMesage(requestJson);
+                    JSONArray responseArrayJSON = handleGetAllMessage(requestJson);
                     responseJson.put("action", "getAllMessage");
                     responseJson.put("messages", responseArrayJSON);
                     break;
@@ -171,18 +171,23 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
     }
 
     private JSONObject handleGetUserFriendList(JSONObject requestJson) {
+        return requestJson;
     }
 
     private JSONObject handleChangeName(JSONObject requestJson) {
+        return requestJson;
     }
 
     private JSONObject handleChangePassword(JSONObject requestJson) {
+        return requestJson;
     }
 
     private JSONObject handleDeleteFriend(JSONObject requestJson) {
+        return requestJson;
     }
 
     private JSONObject handleIsFriendRequestAccept(JSONObject requestJson) {
+        return requestJson;
     }
 
     private JSONObject handleAddNewFriend(JSONObject requestJson) {
@@ -196,9 +201,11 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
     }
 
     private JSONObject handleGetLatestMessage(JSONObject requestJson) {
+        return requestJson;
     }
 
     private JSONObject handleLogout(JSONObject requestJson) {
+        return requestJson;
     }
 
 
@@ -215,8 +222,10 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         return response;
     }
 
-    private JSONArray handleGetAllMesage(JSONObject requestJson) throws SQLException {
+    private JSONArray handleGetAllMessage(JSONObject requestJson) throws SQLException {
         String cid = requestJson.getString("cid");
+        JSONArray responseArray = new JSONArray();
+        return responseArray;
     }
 
 
@@ -256,7 +265,11 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
     private JSONObject handleLogin(JSONObject requestJson) throws SQLException {
         String email = requestJson.getString("email");
         String password = requestJson.getString("password");
-        return databaseOperator.login(email, password);
+        boolean result = databaseOperator.login(email, password);
+        JSONObject response = new JSONObject();
+        response.put("action", "login");
+        response.put("success", result);
+        return response ;
     }
 
     //通知所有客户端有新消息cid, sid, content
