@@ -38,23 +38,23 @@ public class DatabaseOperator {
             System.out.println("(Database Operator)Database Reconnected!!!!: " + databaseConnector.getConnection());
         }
     }
-    public String checkConversation(String uid, String fid) throws SQLException {
-        sql = "SELECT cid FROM user_conversations where (uid1 = ? AND uid2 = ?) OR (uid1 = ? AND uid2 = ?);";
-        try {
-            stmt = databaseConnector.getConnection().prepareStatement(sql);
-            stmt.setString(1, uid);
-            stmt.setString(2, fid);
-            resultSet = stmt.executeQuery();  // 执行查询
-            if (resultSet.next()) {  // 判断是否有结果
-                return resultSet.getString("cid");
-            } else {
-                return null;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+//    public String checkConversationID(String uid, String fid) throws SQLException {
+//        sql = "SELECT cid FROM user_conversations where (uid1 = ? AND uid2 = ?) OR (uid1 = ? AND uid2 = ?);";
+//        try {
+//            stmt = databaseConnector.getConnection().prepareStatement(sql);
+//            stmt.setString(1, uid);
+//            stmt.setString(2, fid);
+//            resultSet = stmt.executeQuery();  // 执行查询
+//            if (resultSet.next()) {  // 判断是否有结果
+//                return resultSet.getString("cid");
+//            } else {
+//                return null;
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
 
     public boolean deleteFriend(String uid,String fid) throws SQLException{
         sql = "UPDATE friendlist SET status = \"blocked\" WHERE (uid = ? AND fid = ?) OR (uid = ? AND fid = ?);";
@@ -309,7 +309,6 @@ public class DatabaseOperator {
             return null;
         }
     }
-
     public String selectExistConversation(String uid1, String uid2){
         sql = "SELECT cid FROM conversations WHERE cid IN (SELECT cid FROM user_conversations WHERE uid1 = ?) AND cid IN (SELECT cid FROM user_conversations WHERE uid2 = ?);";
         try {
@@ -328,7 +327,7 @@ public class DatabaseOperator {
         }
     }
 
-    public String insertStartNewConversation(String uid1, String uid2) {
+    public String checkConversationID(String uid1, String uid2) {
         try {
             //检查是否已经存在对话
             String existConversation = selectExistConversation(uid1, uid2);
@@ -375,4 +374,26 @@ public class DatabaseOperator {
         }
 
     }
+
+    public String getLatestMessage(String uid,String fid)
+    {
+        sql = "SELECT content FROM messages WHERE cid = (SELECT cid FROM user_conversations WHERE (uid1 = ? AND uid2 = ?) OR (uid1 = ? AND uid2 = ?)) ORDER BY timestamp DESC LIMIT 1;";
+        try {
+            stmt = databaseConnector.getConnection().prepareStatement(sql);
+            stmt.setString(1, uid);
+            stmt.setString(2, fid);
+            stmt.setString(3, fid);
+            stmt.setString(4, uid);
+            resultSet = stmt.executeQuery();  // 执行查询
+            if (resultSet.next()) {  // 判断是否有结果
+                return resultSet.getString("content");
+            } else {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

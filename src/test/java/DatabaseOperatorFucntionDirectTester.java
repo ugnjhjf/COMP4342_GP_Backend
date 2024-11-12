@@ -9,6 +9,7 @@ public class DatabaseOperatorFucntionDirectTester {
     private static String uid_rokidna = "d96f962d-f8c0-4c8f-b986-b87e9c877462"; //rokidna
     private static String uid_echidna = "1ac162a4-5a24-4058-a3de-5eb0d639a3fb";
     private static String uid_mojicaa = "63346ffe-0ace-4b8a-8594-ac17057082c2";
+
     private static String result;
 
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
@@ -20,6 +21,7 @@ public class DatabaseOperatorFucntionDirectTester {
 //        testCheckUserIsOnline();
 //        testInsertNewFriend();
         testCheckUserFriendlist();
+//        testinsertStartNewConversation();
 //        try {
 ////            testInsertNewFriend();
 //            testUpdateFriendRequest();
@@ -98,18 +100,10 @@ public class DatabaseOperatorFucntionDirectTester {
 
     public static void testinsertStartNewConversation() throws SQLException {
         String uid1 = uid_echidna;
-        String uid2 = uid_rokidna;
-        String result = databaseOperator.insertStartNewConversation(uid1, uid2);
+        String uid2 = uid_mojicaa;
+        String result = databaseOperator.checkConversationID(uid1, uid2);
         System.out.println("New Conversation ID: " + result);
     }
 
-    public static void testSelectExistConversation() throws SQLException {
-        String uid1 = uid_echidna;
-        String uid2 = uid_rokidna;
-        String result = databaseOperator.selectExistConversation(uid1,uid2);
-
-        System.out.println("Conversation ID: " + result);
-
-    }
 }
 

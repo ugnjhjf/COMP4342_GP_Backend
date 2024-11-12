@@ -84,7 +84,7 @@ public class FrontendAPIProvider extends WebSocketClient {
 
     // 处理注册响应
     private void handleRegisterResponse(JSONObject response) {
-        boolean success = response.optBoolean("success", false);
+        boolean success = response.optBoolean("success");
         if (success) {
             System.out.println("Registration successful.");
         } else {
@@ -142,9 +142,9 @@ public class FrontendAPIProvider extends WebSocketClient {
             client.connectBlocking();  // 阻塞，直到连接建立
 
             // 示例：发送注册请求
-            client.sendRegisterRequest("testUser", "test@example.com", "password123");
+            client.sendRegisterRequest("Tekon2", "Tekon@exdample.com", "password1235");
             Thread.sleep(1000);
-            client.sendStartConversationRequest("d96f962d-f8c0-4c8f-b986-b87e9c877462", "1ac162a4-5a24-4058-a3de-5eb0d639a3fb", "hello");
+//            client.sendStartConversationRequest("d96f962d-f8c0-4c8f-b986-b87e9c877462", "1ac162a4-5a24-4058-a3de-5eb0d639a3fb", "hello");
 
 
         } catch (URISyntaxException | InterruptedException e) {

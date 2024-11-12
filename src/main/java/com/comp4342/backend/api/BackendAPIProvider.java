@@ -32,16 +32,15 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         this.databaseOperator = new DatabaseOperator();
     }
 
-    public BackendAPIProvider BackendAPIProvider() throws ClassNotFoundException {
-        return new BackendAPIProvider();
-    }
-
     public static void main(String[] args) {
         SpringApplication.run(BackendAPIProvider.class, args);
     }
+
+    public BackendAPIProvider BackendAPIProvider() throws ClassNotFoundException {
+        return new BackendAPIProvider();
+    }
     // 启动服务器
     // 将 WebSocket 处理程序注册为 Spring Bean
-
 
     // WebSocket 的路由（访问地址）
     @Override
@@ -76,22 +75,47 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
                 case "login":
                     responseJson = handleLogin(requestJson);
                     break;
-                case "checkUserInfo":
-                    responseJson = handleCheckUserInfoByUID(requestJson);
-                    break;
-                case "startConversation":
-                    responseJson = handleStartConversation(requestJson);
-                    break;
-                case "sendMeesage":
+
+                case "sendNewMessage":
                     responseJson = handleSendNewMessage(requestJson);
-                    break;
-                case "getNewMessage":
-                    break;
-                case "checkConversation":
                     break;
 
                 case "getAllMessage":
                     break;
+
+                case "getLatestMessage":
+//                    responseJson = handleGetLatestMessage(requestJson);
+                    break;
+
+
+                case "getUserInfoByUID":
+                    responseJson = handleGetUserInfoByUID(requestJson);
+                    break;
+                case "getUserInfoByEmail":
+                    responseJson = handleGetUserInfoByEmail(requestJson);
+                    break;
+//                case "addNewFriend":
+//                    responseJson = handleAddNewFriend(requestJson);
+//                    break;
+//                case "isFriendRequestAccept":
+//                    responseJson = handleIsFriendRequestAccept(requestJson);
+//                    break;
+//                case "deleteFriend":
+//                    responseJson = handleDeleteFriend(requestJson);
+//                    break;
+//                case "changePassword":
+//                    responseJson = handleChangePassword(requestJson);
+//                    break;
+//                case "changeName":
+//                    responseJson = handleChangeName(requestJson);
+//                    break;
+
+
+
+                case "getConversationID":
+                    responseJson = handlCheckConversationID(requestJson.getString("uid"), requestJson.getString("fid"));
+                    break;
+
 
                 default:
                     responseJson.put("error", "Unknown action");
@@ -115,14 +139,14 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         Date date = new Date(System.currentTimeMillis());
         boolean result =  databaseOperator.insertNewMessage(cid, uid, content);
         JSONObject response = new JSONObject();
-        response.put("action", "sendMeesage");
+        response.put("action", "sendNewMessage");
         response.put("success", result);
         return response;
     }
-    public JSONObject handleCheckConversation(String uid, String fid) throws SQLException {
-        String cid = databaseOperator.checkConversation(uid, fid);
+    public JSONObject handlCheckConversationID(String uid, String fid) throws SQLException {
+        String cid = databaseOperator.checkConversationID(uid, fid);
         JSONObject response = new JSONObject();
-        response.put("action", "checkConversation");
+        response.put("action", "getConversationID");
         response.put("cid", cid);
         return response;
     }
@@ -148,21 +172,21 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
     }
 
     // 处理检查用户信息请求
-    private JSONObject handleCheckUserInfoByUID(JSONObject requestJson) throws SQLException {
+    private JSONObject handleGetUserInfoByUID(JSONObject requestJson) throws SQLException {
         String uid = requestJson.getString("uid");
         return databaseOperator.checkUserInfoByUID(uid);
     }
 
-    private JSONObject handleCheckUserInfoByEmail(JSONObject requestJson) throws SQLException {
+    private JSONObject handleGetUserInfoByEmail(JSONObject requestJson) throws SQLException {
         String email = requestJson.getString("email");
         return databaseOperator.checkUserInfoByEmail(email);
     }
 
     // 处理开始新会话请求
-    private JSONObject handleStartConversation(JSONObject requestJson) {
+    private JSONObject handlCheckConversationID(JSONObject requestJson) {
         String uid1 = requestJson.getString("uid1");
         String uid2 = requestJson.getString("uid2");
-        String conversationId = databaseOperator.insertStartNewConversation(uid1, uid2);
+        String conversationId = databaseOperator.checkConversationID(uid1, uid2);
 
         JSONObject response = new JSONObject();
         response.put("action", "startConversation");
