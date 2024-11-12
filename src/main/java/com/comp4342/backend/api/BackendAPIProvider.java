@@ -82,17 +82,20 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
                     break;
                 case "sendNewMessage":
                     responseJson = handleSendNewMessage(requestJson);
+                    serverBroadcast(this.action);
                     break;
                 case "getLatestMessage":
                      responseJson = handleGetLatestMessage(requestJson);
                     break;
 
                 case "getConversationID":
-                    responseJson = handleCheckConversationID(requestJson.getString("uid"), requestJson.getString("fid"));
+                    responseJson = handleGetConversationID(requestJson.getString("uid"), requestJson.getString("fid"));
                     break;
 
                 case "addNewFriend":
                     responseJson = handleAddNewFriend(requestJson);
+                    serverBroadcast(this.action);
+
                     break;
 
                 case "isFriendRequestAccept":
@@ -148,7 +151,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         }
 
         // 发送响应 JSON 到前端
-        serverBroadcast(this.action);
+
         System.out.println("[←]RESPOND: "+ "to: " + session.getId() +" " + responseJson.toString() );
         session.sendMessage(new TextMessage(responseJson.toString()));
     }
@@ -171,23 +174,52 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         return response;
     }
 
-    private JSONObject handleGetUserFriendList(JSONObject requestJson) {
+    private JSONObject handleGetUserFriendList(JSONObject requestJson) throws SQLException {
+        String uid = requestJson.getString("uid");
+        JSONArray friendList = databaseOperator.checkUserFriendlist(uid);
+        JSONObject response = new JSONObject();
+        response.put("action", "getUserFriendList");
+        response.put("friendList", friendList);
         return requestJson;
     }
 
     private JSONObject handleChangeName(JSONObject requestJson) {
+        String uid = requestJson.getString("uid");
+        String uname = requestJson.getString("uname");
+        boolean result = databaseOperator.changeName(uid, uname);
+        JSONObject response = new JSONObject();
+        response.put("action", "changeName");
+        response.put("success", result);
         return requestJson;
     }
 
     private JSONObject handleChangePassword(JSONObject requestJson) {
+        String uid = requestJson.getString("uid");
+        String password = requestJson.getString("password");
+        boolean result = databaseOperator.changePassword(uid, password);
+        JSONObject response = new JSONObject();
+        response.put("action", "changePassword");
+        response.put("success", result);
         return requestJson;
     }
 
     private JSONObject handleDeleteFriend(JSONObject requestJson) {
+        String uid = requestJson.getString("uid");
+        String fid = requestJson.getString("fid");
+        boolean result = databaseOperator.updateFriendRequest(uid, fid,"blocked");
+        JSONObject response = new JSONObject();
+        response.put("action", "deleteFriend");
+        response.put("success", result);
         return requestJson;
     }
 
-    private JSONObject handleIsFriendRequestAccept(JSONObject requestJson) {
+    private JSONObject handleIsFriendRequestAccept(JSONObject requestJson) throws SQLException {
+        String uid = requestJson.getString("uid");
+        String fid = requestJson.getString("fid");
+        boolean result = databaseOperator.checkIsFriend(uid, fid);
+        JSONObject response = new JSONObject();
+        response.put("action", "isFriendRequestAccept");
+        response.put("success", result);
         return requestJson;
     }
 
@@ -203,7 +235,10 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
     }
 
     private JSONObject handleGetLatestMessage(JSONObject requestJson) {
-        return requestJson;
+        String uid = requestJson.getString("uid");
+        String fid = requestJson.getString("fid");
+        JSONObject response = databaseOperator.getLatestMessage(uid, fid);
+        return response;
     }
 
     private JSONObject handleLogout(JSONObject requestJson) {
@@ -225,8 +260,9 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
     }
 
     private JSONArray handleGetAllMessage(JSONObject requestJson) throws SQLException {
-        String cid = requestJson.getString("cid");
-        JSONArray responseArray = new JSONArray();
+        String uid = requestJson.getString("uid");
+        String fid = requestJson.getString("fid");
+        JSONArray responseArray = databaseOperator.getAllMessage(uid, fid);
         return responseArray;
     }
 
@@ -242,7 +278,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         response.put("success", result);
         return response;
     }
-    public JSONObject handleCheckConversationID(String uid, String fid) throws SQLException {
+    public JSONObject handleGetConversationID(String uid, String fid) throws SQLException {
         String cid = databaseOperator.checkConversationID(uid, fid);
         JSONObject response = new JSONObject();
         response.put("action", "getConversationID");

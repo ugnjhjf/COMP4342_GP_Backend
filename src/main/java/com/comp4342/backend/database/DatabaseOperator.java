@@ -403,7 +403,7 @@ public class DatabaseOperator {
         }
     }
 
-    public String getLatestMessage(String uid,String fid)
+    public JSONObject getLatestMessage(String uid, String fid)
     {
         sql = "SELECT content FROM messages WHERE cid = (SELECT cid FROM user_conversations WHERE (uid1 = ? AND uid2 = ?) OR (uid1 = ? AND uid2 = ?)) ORDER BY timestamp DESC LIMIT 1;";
         try {
@@ -413,11 +413,16 @@ public class DatabaseOperator {
             stmt.setString(3, fid);
             stmt.setString(4, uid);
             resultSet = stmt.executeQuery();  // 执行查询
+            JSONObject response = new JSONObject();
             if (resultSet.next()) {  // 判断是否有结果
-                return resultSet.getString("content");
+                response.put("sid", resultSet.getString("sid"));
+                response.put("content", resultSet.getString("content"));
+                response.put("timestamp", resultSet.getString("timestamp"));
+                return response;
             } else {
                 return null;
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
