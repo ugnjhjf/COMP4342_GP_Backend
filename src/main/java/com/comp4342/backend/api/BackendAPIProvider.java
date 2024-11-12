@@ -95,7 +95,6 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
                 case "addNewFriend":
                     responseJson = handleAddNewFriend(requestJson);
                     serverBroadcast(this.action);
-
                     break;
 
                 case "isFriendRequestAccept":
@@ -180,7 +179,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         JSONObject response = new JSONObject();
         response.put("action", "getUserFriendList");
         response.put("friendList", friendList);
-        return requestJson;
+        return response;
     }
 
     private JSONObject handleChangeName(JSONObject requestJson) {
@@ -190,7 +189,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         JSONObject response = new JSONObject();
         response.put("action", "changeName");
         response.put("success", result);
-        return requestJson;
+        return response;
     }
 
     private JSONObject handleChangePassword(JSONObject requestJson) {
@@ -200,7 +199,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         JSONObject response = new JSONObject();
         response.put("action", "changePassword");
         response.put("success", result);
-        return requestJson;
+        return response;
     }
 
     private JSONObject handleDeleteFriend(JSONObject requestJson) {
@@ -210,17 +209,19 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         JSONObject response = new JSONObject();
         response.put("action", "deleteFriend");
         response.put("success", result);
-        return requestJson;
+        return response;
     }
 
     private JSONObject handleIsFriendRequestAccept(JSONObject requestJson) throws SQLException {
         String uid = requestJson.getString("uid");
         String fid = requestJson.getString("fid");
-        boolean result = databaseOperator.checkIsFriend(uid, fid);
+        String status = requestJson.getString("status");
+        boolean result = databaseOperator.updateFriendRequest(uid, fid, status);
+        System.out.println("isFriendRequestAccept: " + result);
         JSONObject response = new JSONObject();
         response.put("action", "isFriendRequestAccept");
         response.put("success", result);
-        return requestJson;
+        return response;
     }
 
     private JSONObject handleAddNewFriend(JSONObject requestJson) throws SQLException {
@@ -307,6 +308,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         JSONObject response = new JSONObject();
         response.put("action", "login");
         response.put("success", result);
+        response.put("uid", databaseOperator.checkUserInfoByEmail(email).getString("uid"));
         return response ;
     }
 

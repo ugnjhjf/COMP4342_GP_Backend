@@ -255,12 +255,15 @@ public class DatabaseOperator {
         }
     }
     public boolean updateFriendRequest(String uid, String fid, String status){
-        sql = "UPDATE friendlist SET status = ? WHERE uid = ? AND fid = ?;";
+        sql = "UPDATE friendlist SET status = ? WHERE (uid = ? AND fid = ?) OR (uid = ? AND fid = ?);";
         try {
             stmt = databaseConnector.getConnection().prepareStatement(sql);
             stmt.setString(1, status);
             stmt.setString(2, uid);
             stmt.setString(3, fid);
+            stmt.setString(4, fid);
+            stmt.setString(5, uid);
+            System.out.println(stmt.toString());
             stmt.executeUpdate();  // 执行更新
             return true;
         } catch (SQLException e) {

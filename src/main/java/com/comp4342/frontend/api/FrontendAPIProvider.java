@@ -11,19 +11,19 @@ import java.net.URISyntaxException;
 
 public class FrontendAPIProvider extends WebSocketClient {
     //Execute result
-    private boolean success;
-    private JSONObject latest_message;
-    private JSONArray all_message;
-    private JSONArray friend_list;
+    public boolean success;
+    public JSONObject latest_message;
+    public JSONArray all_message;
+    public JSONArray friend_list;
 
     //User info
-    private String action;
-    private String uid;
-    private String fid;
-    private String content;
-    private String uname;
-    private String email;
-    private String cid; //目前对话的id
+    public String action;
+    public String uid;
+    public String fid;
+    public String content;
+    public String uname;
+    public String email;
+    public String cid; //目前对话的id
 
 
     // 构造函数，初始化 WebSocket 客户端
@@ -31,7 +31,6 @@ public class FrontendAPIProvider extends WebSocketClient {
         super(serverURI);
         this.setConnectionLostTimeout(120);
     }
-    public boolean isSuccessful = false;
     @Override
     public void onOpen(ServerHandshake handshake) {
         System.out.println("[→][Client] Connected to WebSocket server.");
@@ -242,10 +241,12 @@ public class FrontendAPIProvider extends WebSocketClient {
 
     // 处理登录响应
     private void handleLoginResponse(JSONObject response) {
-        boolean success = response.optBoolean("success", false);
+        success = response.optBoolean("success", false);
+        action = response.optString("action");
+        uid = response.optString("uid", "unknown");
         System.out.println("[←][Server] Login Status: " + (success ? "successful" : "failed"));
         if (success) {
-            System.out.println("[-][Client] Login successful. User ID: " + response.getString("uid"));
+            System.out.println("[-][Client] Login successful. User ID: " + uid);
         } else {
             System.out.println("[-][Client] Login failed.");
         }
@@ -377,12 +378,13 @@ public void sendRegisterRequest(String uname, String email, String password) {
         System.out.println("[→][Client] Sent add new friend request: " + addNewFriendRequest);
     }
 
-    public void isFriendRequestAccept(String uid, String fid)
+    public void isFriendRequestAccept(String uid, String fid,String status)
     {
         JSONObject isFriendRequestAcceptRequest = new JSONObject();
         isFriendRequestAcceptRequest.put("action", "isFriendRequestAccept");
         isFriendRequestAcceptRequest.put("uid", uid);
         isFriendRequestAcceptRequest.put("fid", fid);
+        isFriendRequestAcceptRequest.put("status", status);
 
         send(isFriendRequestAcceptRequest.toString());  // 发送 JSON 请求
         System.out.println("[→][Client] Sent is friend request accept request: " + isFriendRequestAcceptRequest);
