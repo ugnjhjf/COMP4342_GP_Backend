@@ -168,6 +168,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         JSONObject response = new JSONObject();
         response.put("action", "isUserOnline");
         response.put("isOnline", result);
+        return response;
     }
 
     private JSONObject handleGetUserFriendList(JSONObject requestJson) {
@@ -190,10 +191,11 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         return requestJson;
     }
 
-    private JSONObject handleAddNewFriend(JSONObject requestJson) {
+    private JSONObject handleAddNewFriend(JSONObject requestJson) throws SQLException {
         String uid = requestJson.getString("uid");
         String email = requestJson.getString("email");
-        boolean result = databaseOperator.insertNewFriend(uid, email, "requested");
+        String fid = databaseOperator.checkUserInfoByEmail(email).getString("uid");
+        boolean result = databaseOperator.insertNewFriend(uid, fid, "requested");
         JSONObject response = new JSONObject();
         response.put("action", "addNewFriend");
         response.put("success", result);

@@ -54,6 +54,9 @@ public class FrontendAPIProvider extends WebSocketClient {
                 handleStartConversationResponse(response);
                 break;
 
+            case "addNewFriend":
+                handleAddNewFriendResponse(response);
+
 
                 //服务器推送给所有客户端
             case "serverPush":
@@ -65,17 +68,22 @@ public class FrontendAPIProvider extends WebSocketClient {
         }
     }
 
+    private void handleAddNewFriendResponse(JSONObject response) {
+        boolean success = response.optBoolean("success", false);
+        System.out.println("Add new friend result: " + success);
+    }
+
     private void handleStartConversationResponse(JSONObject response) {
-        boolean isSuccessful = response.optBoolean("isSuccessful", false);
-        System.out.println("Start conversation result: " + isSuccessful);
+        boolean success = response.optBoolean("success", false);
+        System.out.println("Start conversation result: " + success);
     }
 
 
 
     // 处理登录响应
     private void handleLoginResponse(JSONObject response) {
-        boolean isSuccessful = response.optBoolean("isLogonSucessful", false);
-        if (isSuccessful) {
+        boolean success = response.optBoolean("success", false);
+        if (success) {
             System.out.println("Login successful. User ID: " + response.getString("uid"));
         } else {
             System.out.println("Login failed.");
@@ -133,6 +141,17 @@ public class FrontendAPIProvider extends WebSocketClient {
         System.out.println("Sent register request: " + ConversationRequest);
     }
 
+    public void addNewFriend(String uid, String email)
+    {
+        JSONObject addNewFriendRequest = new JSONObject();
+        addNewFriendRequest.put("action", "addNewFriend");
+        addNewFriendRequest.put("uid", uid);
+        addNewFriendRequest.put("email", email);
+
+        send(addNewFriendRequest.toString());  // 发送 JSON 请求
+        System.out.println("Sent add new friend request: " + addNewFriendRequest);
+    }
+
     //测试发起会话请求
     public static void main(String[] args) {
         try {
@@ -142,7 +161,8 @@ public class FrontendAPIProvider extends WebSocketClient {
             client.connectBlocking();  // 阻塞，直到连接建立
 
             // 示例：发送注册请求
-            client.sendRegisterRequest("Tekon2", "Tekon@exdample.com", "password1235");
+//            client.sendRegisterRequest("Tekon2", "Tekon@exdample.com", "password1235");
+            client.addNewFriend("184bc12a-2b5e-41a4-8342-d997ca0e7666","alohb");
             Thread.sleep(1000);
 //            client.sendStartConversationRequest("d96f962d-f8c0-4c8f-b986-b87e9c877462", "1ac162a4-5a24-4058-a3de-5eb0d639a3fb", "hello");
 
