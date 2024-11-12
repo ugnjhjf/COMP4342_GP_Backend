@@ -33,9 +33,9 @@ public class FrontendAPIProviderTest {
 //        testIsFriendRequestAccept();
 
         //Pass Test↑
-//        testDeleteFriend();
-//        testChangePassword();
-//        testChangeName();
+        testDeleteFriend();
+        testChangePassword();
+        testChangeName();
 //        testGetUserInfoByUID();
 //        testGetUserInfoByEmail();
 //        testGetUserFriendList();
