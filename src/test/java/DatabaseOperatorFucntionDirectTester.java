@@ -89,9 +89,9 @@ public class DatabaseOperatorFucntionDirectTester {
 //        System.out.println("Change result: "+resultJSON2);
 //    }
     public static void testlogin() throws SQLException{
-        JSONObject resultJSON = databaseOperator.login("rokidna@gmail.com","123456");
-        if (resultJSON.getBoolean("isLogonSucessful")){
-            System.out.println("Hello!"+resultJSON.getString("uname"));
+        boolean result = databaseOperator.login("rokidna@gmail.com","123456");
+        if (result){
+            System.out.println("Hello!");
         }else{
             System.out.println("Incorrect password / User not exist");
         }

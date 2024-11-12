@@ -1,10 +1,12 @@
 package com.comp4342.backend.api;
 
 import com.comp4342.backend.database.*;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -72,21 +74,41 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
                 case "register":
                     responseJson = handleRegister(requestJson);
                     break;
-                case "login":
-                    responseJson = handleLogin(requestJson);
-                    break;
 
+                case "getAllMessage":
+                    JSONArray responseArrayJSON = handleGetAllMesage(requestJson);
+                    responseJson.put("action", "getAllMessage");
+                    responseJson.put("messages", responseArrayJSON);
+                    break;
                 case "sendNewMessage":
                     responseJson = handleSendNewMessage(requestJson);
                     break;
-
-                case "getAllMessage":
-                    break;
-
                 case "getLatestMessage":
-//                    responseJson = handleGetLatestMessage(requestJson);
+                     responseJson = handleGetLatestMessage(requestJson);
                     break;
 
+                case "getConversationID":
+                    responseJson = handleCheckConversationID(requestJson.getString("uid"), requestJson.getString("fid"));
+                    break;
+
+                case "addNewFriend":
+                    responseJson = handleAddNewFriend(requestJson);
+                    break;
+
+                case "isFriendRequestAccept":
+                    responseJson = handleIsFriendRequestAccept(requestJson);
+                    break;
+
+                case "deleteFriend":
+                    responseJson = handleDeleteFriend(requestJson);
+                    break;
+
+                case "changePassword":
+                    responseJson = handleChangePassword(requestJson);
+                    break;
+                case "changeName":
+                    responseJson = handleChangeName(requestJson);
+                    break;
 
                 case "getUserInfoByUID":
                     responseJson = handleGetUserInfoByUID(requestJson);
@@ -94,28 +116,27 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
                 case "getUserInfoByEmail":
                     responseJson = handleGetUserInfoByEmail(requestJson);
                     break;
-//                case "addNewFriend":
-//                    responseJson = handleAddNewFriend(requestJson);
-//                    break;
-//                case "isFriendRequestAccept":
-//                    responseJson = handleIsFriendRequestAccept(requestJson);
-//                    break;
-//                case "deleteFriend":
-//                    responseJson = handleDeleteFriend(requestJson);
-//                    break;
-//                case "changePassword":
-//                    responseJson = handleChangePassword(requestJson);
-//                    break;
-//                case "changeName":
-//                    responseJson = handleChangeName(requestJson);
-//                    break;
 
-
-
-                case "getConversationID":
-                    responseJson = handlCheckConversationID(requestJson.getString("uid"), requestJson.getString("fid"));
+                case "getUserFriendList":
+                    responseJson = handleGetUserFriendList(requestJson);
                     break;
 
+                case "isUserOnline":
+                    responseJson = handleIsUserOnline(requestJson);
+                    break;
+
+                case "isFriend":
+                    responseJson = handleIsFriend(requestJson);
+                    break;
+
+
+                case "login":
+                    responseJson = handleLogin(requestJson);
+                    break;
+
+                case "logout":
+                    responseJson = handleLogout(requestJson);
+                    break;
 
                 default:
                     responseJson.put("error", "Unknown action");
@@ -127,29 +148,59 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         }
 
         // 发送响应 JSON 到前端
-        handleNewMessage(this.action);
+        serverBroadcast(this.action);
         System.out.println("[←]RESPOND: "+ "to: " + session.getId() +" " + responseJson.toString() );
         session.sendMessage(new TextMessage(responseJson.toString()));
     }
 
-    private JSONObject handleSendNewMessage(JSONObject requestJson) {
-        String uid = requestJson.getString("uid");
-        String content = requestJson.getString("content");
-        String cid = requestJson.getString("fid");
-        Date date = new Date(System.currentTimeMillis());
-        boolean result =  databaseOperator.insertNewMessage(cid, uid, content);
+    private JSONObject handleIsFriend(JSONObject requestJson) throws SQLException {
+        JSONObject friendInfo = databaseOperator.checkUserInfoByEmail(requestJson.getString("email"));
+        boolean result= databaseOperator.checkIsFriend(requestJson.getString("uid"), friendInfo.getString("email"));
         JSONObject response = new JSONObject();
-        response.put("action", "sendNewMessage");
+        response.put("action", "isFriend");
+        response.put("isFriend", result);
+        return response;
+    }
+
+    private JSONObject handleIsUserOnline(JSONObject requestJson) {
+        String uid = requestJson.getString("uid");
+        boolean result = databaseOperator.checkUserIsOnline(uid);
+        JSONObject response = new JSONObject();
+        response.put("action", "isUserOnline");
+        response.put("isOnline", result);
+    }
+
+    private JSONObject handleGetUserFriendList(JSONObject requestJson) {
+    }
+
+    private JSONObject handleChangeName(JSONObject requestJson) {
+    }
+
+    private JSONObject handleChangePassword(JSONObject requestJson) {
+    }
+
+    private JSONObject handleDeleteFriend(JSONObject requestJson) {
+    }
+
+    private JSONObject handleIsFriendRequestAccept(JSONObject requestJson) {
+    }
+
+    private JSONObject handleAddNewFriend(JSONObject requestJson) {
+        String uid = requestJson.getString("uid");
+        String email = requestJson.getString("email");
+        boolean result = databaseOperator.insertNewFriend(uid, email, "requested");
+        JSONObject response = new JSONObject();
+        response.put("action", "addNewFriend");
         response.put("success", result);
         return response;
     }
-    public JSONObject handlCheckConversationID(String uid, String fid) throws SQLException {
-        String cid = databaseOperator.checkConversationID(uid, fid);
-        JSONObject response = new JSONObject();
-        response.put("action", "getConversationID");
-        response.put("cid", cid);
-        return response;
+
+    private JSONObject handleGetLatestMessage(JSONObject requestJson) {
     }
+
+    private JSONObject handleLogout(JSONObject requestJson) {
+    }
+
 
     // 处理注册请求
     private JSONObject handleRegister(JSONObject requestJson) throws SQLException {
@@ -164,12 +215,30 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         return response;
     }
 
-    // 处理登录请求
-    private JSONObject handleLogin(JSONObject requestJson) throws SQLException {
-        String email = requestJson.getString("email");
-        String password = requestJson.getString("password");
-        return databaseOperator.login(email, password);
+    private JSONArray handleGetAllMesage(JSONObject requestJson) throws SQLException {
+        String cid = requestJson.getString("cid");
     }
+
+
+    private JSONObject handleSendNewMessage(JSONObject requestJson) {
+        String uid = requestJson.getString("uid");
+        String content = requestJson.getString("content");
+        String cid = requestJson.getString("fid");
+        Date date = new Date(System.currentTimeMillis());
+        boolean result =  databaseOperator.insertNewMessage(cid, uid, content);
+        JSONObject response = new JSONObject();
+        response.put("action", "sendNewMessage");
+        response.put("success", result);
+        return response;
+    }
+    public JSONObject handleCheckConversationID(String uid, String fid) throws SQLException {
+        String cid = databaseOperator.checkConversationID(uid, fid);
+        JSONObject response = new JSONObject();
+        response.put("action", "getConversationID");
+        response.put("cid", cid);
+        return response;
+    }
+
 
     // 处理检查用户信息请求
     private JSONObject handleGetUserInfoByUID(JSONObject requestJson) throws SQLException {
@@ -182,20 +251,16 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         return databaseOperator.checkUserInfoByEmail(email);
     }
 
-    // 处理开始新会话请求
-    private JSONObject handlCheckConversationID(JSONObject requestJson) {
-        String uid1 = requestJson.getString("uid1");
-        String uid2 = requestJson.getString("uid2");
-        String conversationId = databaseOperator.checkConversationID(uid1, uid2);
 
-        JSONObject response = new JSONObject();
-        response.put("action", "startConversation");
-        response.put("conversationId", conversationId);
-        return response;
+    // 处理登录请求
+    private JSONObject handleLogin(JSONObject requestJson) throws SQLException {
+        String email = requestJson.getString("email");
+        String password = requestJson.getString("password");
+        return databaseOperator.login(email, password);
     }
 
     //通知所有客户端有新消息cid, sid, content
-    private void handleNewMessage(String client_action) throws IOException {
+    private void serverBroadcast(String client_action) throws IOException {
         JSONObject responseJSON = new JSONObject();
         responseJSON.put("action", "serverPush");
         responseJSON.put("client_action",client_action);
@@ -205,4 +270,5 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         System.out.println("[←]RESPOND: Broadcast new message to ALL clients");
         this.session.sendMessage(new TextMessage(responseJSON.toString()));
     }
+
 }

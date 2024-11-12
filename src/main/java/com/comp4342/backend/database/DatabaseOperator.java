@@ -137,17 +137,23 @@ public class DatabaseOperator {
 
             try (ResultSet resultSet = stmt.executeQuery()) {
                 while (resultSet.next()) {
-                    // 对于每一条结果，新建一个 JSONObject 并填入数据
                     JSONObject friend = new JSONObject();
                     String friendUid = resultSet.getString("uid");
                     String friendFid = resultSet.getString("fid");
                     String uname = resultSet.getString("uname");
 
-                    // 确保 friend 的 id 和 uname 正确地分配到 JSON 中
-                    friend.put("fid", uid.equals(friendUid) ? friendFid : friendUid);
-                    friend.put("uname", uname);
+                    // 判断是否为 uid 还是 fid，并获取对话 ID 和在线状态
+                    String friendId = uid.equals(friendUid) ? friendFid : friendUid;
+                    String cid = checkConversationID(uid, friendId);
+                    boolean isOnline = checkUserIsOnline(friendId);
 
-                    // 将每个好友的信息添加到 JSONArray 中
+                    // 将好友信息、cid 和在线状态填入 JSON 对象
+                    friend.put("fid", friendId);
+                    friend.put("uname", uname);
+                    friend.put("cid", cid);
+                    friend.put("isOnline", isOnline);
+
+                    // 将好友的信息添加到 JSONArray 中
                     friendsList.put(friend);
                 }
             }
@@ -156,7 +162,6 @@ public class DatabaseOperator {
             return null;
         }
 
-        // 返回包含所有好友的 JSON 数组
         return friendsList;
     }
 
@@ -287,7 +292,7 @@ public class DatabaseOperator {
         }
     }
 
-    public JSONObject login(String email,String password){
+    public boolean login(String email,String password){
         sql = "SELECT uid,uname FROM user where email = ? AND password = ?;";
         try{
             stmt = databaseConnector.getConnection().prepareStatement(sql);
@@ -295,18 +300,14 @@ public class DatabaseOperator {
             stmt.setString(2,password);
             resultSet = stmt.executeQuery();  // 执行查询
             if (resultSet.next()) {  // 判断是否有结果
-                resultJson.put("uid", resultSet.getString("uid"));
-                resultJson.put("uname",resultSet.getString("uname"));
-                resultJson.put("isLogonSucessful",true);
-                return resultJson;
+               return true;
             } else {
-                resultJson.put("isLogonSucessful",false);
-                return resultJson;
+                return false;
             }
         }
         catch (SQLException e) {
             e.printStackTrace();
-            return null;
+            return false;
         }
     }
     public String selectExistConversation(String uid1, String uid2){
@@ -373,6 +374,33 @@ public class DatabaseOperator {
             return false;
         }
 
+    }
+    public JSONArray getAllMessage(String uid, String fid)
+    {
+        sql = "SELECT * FROM messages WHERE cid = (SELECT cid FROM user_conversations WHERE (uid1 = ? AND uid2 = ?) OR (uid1 = ? AND uid2 = ?));";
+        try {
+            stmt = databaseConnector.getConnection().prepareStatement(sql);
+            stmt.setString(1, uid);
+            stmt.setString(2, fid);
+            stmt.setString(3, fid);
+            stmt.setString(4, uid);
+            resultSet = stmt.executeQuery();  // 执行查询
+            JSONArray messages = new JSONArray();
+            while (resultSet.next()) {
+                JSONObject message = new JSONObject();
+                message.put("cid", resultSet.getString("cid"));
+                message.put("mid", resultSet.getString("mid"));
+                message.put("sid", resultSet.getString("sid"));
+                message.put("content", resultSet.getString("content"));
+                message.put("timestamp", resultSet.getString("timestamp"));
+                message.put("status", resultSet.getString("status"));
+                messages.put(message);
+            }
+            return messages;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public String getLatestMessage(String uid,String fid)
