@@ -32,11 +32,11 @@ public class DatabaseConnector {
             String username = "root";
             String password = "SecretDB";
             connection = DriverManager.getConnection(url, username, password);
-            System.out.println("Database connection successful");
+            System.out.println("[-][Server] Note: Database connection successful");
         } catch (ClassNotFoundException e) {
-            System.err.println("Database driver not found: " + e.getMessage());
+            System.err.println("[-][Server] Note: Database driver not found: " + e.getMessage());
         } catch (SQLException e) {
-            System.err.println("Database connection failure：" + e.getMessage());
+            System.err.println("[-][Server] Note: Database connection failure：" + e.getMessage());
         }
     }
 
@@ -63,7 +63,7 @@ public class DatabaseConnector {
                 connection.close();
                 System.out.println("Database connection closed");
             } catch (SQLException e) {
-                System.err.println("Failed to close database connection: " + e.getMessage());
+                System.err.println("[-][Server] Error: Failed to close database connection: " + e.getMessage());
             }
         }
     }

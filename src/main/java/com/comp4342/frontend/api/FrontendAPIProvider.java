@@ -63,7 +63,7 @@ public class FrontendAPIProvider extends WebSocketClient {
                 handleLoginResponse(response);
                 break;
 
-            case "getAllMessages":
+            case "getAllMessage":
                 handleGetAllMessagesResponse(response);
                 break;
 
@@ -227,9 +227,9 @@ public class FrontendAPIProvider extends WebSocketClient {
     }
 
     private void handleGetLatestMessageResponse(JSONObject response) {
-        success = response.optBoolean("success", false);
         action = response.optString("action");
-        latest_message = response.optJSONObject("latestMessage");
+        latest_message = response;
+        System.out.println("Latest message: " + latest_message);
         System.out.println("[←][Server & Client] Get latest message result: " + success);
     }
 

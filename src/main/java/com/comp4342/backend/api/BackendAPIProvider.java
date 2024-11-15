@@ -261,6 +261,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         String uid = requestJson.getString("uid");
         String fid = requestJson.getString("fid");
         JSONObject response = databaseOperator.getLatestMessage(uid, fid);
+        response.put("action", "getLatestMessage");
         return response;
     }
 
@@ -286,6 +287,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         String uid = requestJson.getString("uid");
         String fid = requestJson.getString("fid");
         JSONArray responseArray = databaseOperator.getAllMessage(uid, fid);
+
         return responseArray;
     }
 

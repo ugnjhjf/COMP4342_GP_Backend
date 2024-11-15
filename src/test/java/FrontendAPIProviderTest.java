@@ -29,10 +29,12 @@ public class FrontendAPIProviderTest {
          //test
 //         testAddNewFriend(uid_rokidna,email_tekon);
 //         testGetConversationIDByEmail(uid_rokidna,email_tekon);
-         testGetConversationIDByID(uid_rokidna,uid_tekon);
-         testSendNewMessage(uid_tekon,uid_rokidna,"Hello Rokidna");
-         sleep(1000);
-        testSendNewMessage(uid_rokidna,uid_tekon,"Hello Tekon");
+//         testGetConversationIDByID(uid_rokidna,uid_tekon);
+//         testSendNewMessage(uid_tekon,uid_rokidna,"Hello Rokidna");
+//         sleep(1000);
+//        testSendNewMessage(uid_rokidna,uid_tekon,"Hello Tekon");
+//        testGetAllMessages(uid_rokidna,uid_tekon);
+        testGetLatestMessage(uid_rokidna,uid_tekon);
 //        testLogin("Rokidna@gnetwork.com", "password123");
     }
 

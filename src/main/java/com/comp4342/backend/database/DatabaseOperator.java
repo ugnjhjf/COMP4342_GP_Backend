@@ -24,7 +24,7 @@ public class DatabaseOperator {
         if (databaseConnector == null) {
             this.databaseConnector = new DatabaseConnector();
             this.connection = databaseConnector.getConnection();
-            System.out.println("[-] Database connected: " + databaseConnector.getConnection());
+            System.out.println("[-][Server] Database connected: " + databaseConnector.getConnection());
         }
     }
     public boolean isConnectionAlive() throws SQLException {
@@ -35,7 +35,7 @@ public class DatabaseOperator {
         if (databaseConnector == null) {
             this.databaseConnector = new DatabaseConnector();
             this.connection = databaseConnector.getConnection();
-            System.out.println("[-] Database Reconnected!!!!: " + databaseConnector.getConnection());
+            System.out.println("[-][Server] Database Reconnected!!!!: " + databaseConnector.getConnection());
         }
     }
 
@@ -434,7 +434,7 @@ public class DatabaseOperator {
 
     public JSONObject getLatestMessage(String uid, String fid)
     {
-        sql = "SELECT content FROM messages WHERE cid = (SELECT cid FROM user_conversations WHERE (uid1 = ? AND uid2 = ?) OR (uid1 = ? AND uid2 = ?)) ORDER BY timestamp DESC LIMIT 1;";
+        sql = "SELECT * FROM messages WHERE cid = (SELECT cid FROM user_conversations WHERE (uid1 = ? AND uid2 = ?) OR (uid1 = ? AND uid2 = ?)) ORDER BY timestamp DESC LIMIT 1;";
         try {
             stmt = databaseConnector.getConnection().prepareStatement(sql);
             stmt.setString(1, uid);
