@@ -1,4 +1,6 @@
-import comp4342.backend.database.DatabaseConnector;
+package legacy;
+
+import com.comp4342.backend.database.DatabaseConnector;
 
 import java.sql.*;
 

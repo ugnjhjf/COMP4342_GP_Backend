@@ -1,4 +1,4 @@
-package comp4342.backend.database;
+package com.comp4342.backend.database;
 
 import java.sql.*;
 
