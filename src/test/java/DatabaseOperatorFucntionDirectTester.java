@@ -98,10 +98,10 @@ public class DatabaseOperatorFucntionDirectTester {
     }
 
 
-    public static void testinsertStartNewConversation() throws SQLException {
+    public static void testinsertStartNewConversationByEmail() throws SQLException {
         String uid1 = uid_echidna;
         String uid2 = uid_mojicaa;
-        String result = databaseOperator.checkConversationID(uid1, uid2);
+        String result = databaseOperator.checkConversationIDByEmail(uid1, uid2);
         System.out.println("New Conversation ID: " + result);
     }
 

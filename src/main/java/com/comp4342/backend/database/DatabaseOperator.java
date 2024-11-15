@@ -24,7 +24,7 @@ public class DatabaseOperator {
         if (databaseConnector == null) {
             this.databaseConnector = new DatabaseConnector();
             this.connection = databaseConnector.getConnection();
-            System.out.println("(Database Operator)Database connected: " + databaseConnector.getConnection());
+            System.out.println("[-] Database connected: " + databaseConnector.getConnection());
         }
     }
     public boolean isConnectionAlive() throws SQLException {
@@ -35,29 +35,12 @@ public class DatabaseOperator {
         if (databaseConnector == null) {
             this.databaseConnector = new DatabaseConnector();
             this.connection = databaseConnector.getConnection();
-            System.out.println("(Database Operator)Database Reconnected!!!!: " + databaseConnector.getConnection());
+            System.out.println("[-] Database Reconnected!!!!: " + databaseConnector.getConnection());
         }
     }
-//    public String checkConversationID(String uid, String fid) throws SQLException {
-//        sql = "SELECT cid FROM user_conversations where (uid1 = ? AND uid2 = ?) OR (uid1 = ? AND uid2 = ?);";
-//        try {
-//            stmt = databaseConnector.getConnection().prepareStatement(sql);
-//            stmt.setString(1, uid);
-//            stmt.setString(2, fid);
-//            resultSet = stmt.executeQuery();  // 执行查询
-//            if (resultSet.next()) {  // 判断是否有结果
-//                return resultSet.getString("cid");
-//            } else {
-//                return null;
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
 
     public boolean deleteFriend(String uid,String fid) throws SQLException{
-        sql = "UPDATE friendlist SET status = \"blocked\" WHERE (uid = ? AND fid = ?) OR (uid = ? AND fid = ?);";
+        sql = "UPDATE friendlist SET status = 'blocked' WHERE (uid = ? AND fid = ?) OR (uid = ? AND fid = ?);";
         try {
             stmt = databaseConnector.getConnection().prepareStatement(sql);
             stmt.setString(1, uid);
@@ -147,7 +130,7 @@ public class DatabaseOperator {
 
                     // 判断是否为 uid 还是 fid，并获取对话 ID 和在线状态
                     String friendId = uid.equals(friendUid) ? friendFid : friendUid;
-                    String cid = checkConversationID(uid, friendId);
+                    String cid = checkConversationIDByID(uid, friendId);
                     boolean isOnline = checkUserIsOnline(friendId);
 
                     // 将好友信息、cid 和在线状态填入 JSON 对象
@@ -176,12 +159,12 @@ public class DatabaseOperator {
             try (ResultSet resultSet = stmt.executeQuery()) {
                 if (resultSet.next()) {  // 确保有结果
                     String status = resultSet.getString("status");
-                    System.out.println("User status: " + status);
+                    System.out.println("[-] User status: " + status);
                     // 判断用户状态是否为 "online"
                     return "online".equalsIgnoreCase(status);
                 } else {
                     // 用户不存在
-                    System.out.println("User with uid " + uid + " not found.");
+                    System.out.println("[-] User with uid " + uid + " not found.");
                     return false;
                 }
             }
@@ -249,7 +232,7 @@ public class DatabaseOperator {
             stmt.executeUpdate();  // 执行更新
             return true;
         }catch (SQLIntegrityConstraintViolationException e){
-            System.out.println("Error: Friend request already send!");
+            System.out.println("[-] Error: Friend request already send!");
             return false;
         }
         catch (SQLException e) {
@@ -289,7 +272,7 @@ public class DatabaseOperator {
             stmt.executeUpdate();  // 执行更新
             return true;
         }catch (SQLIntegrityConstraintViolationException e){
-            System.out.println("Error: Duplicate email");
+            System.out.println("[-] Error: Duplicate email");
             return false;
         }
         catch (SQLException e) {
@@ -300,6 +283,7 @@ public class DatabaseOperator {
 
     public boolean login(String email,String password){
         sql = "SELECT uid,uname FROM user where email = ? AND password = ?;";
+
         try{
             stmt = databaseConnector.getConnection().prepareStatement(sql);
             stmt.setString(1,email);
@@ -334,14 +318,15 @@ public class DatabaseOperator {
         }
     }
 
-    public String checkConversationID(String uid1, String uid2) {
+    public String checkConversationIDByID(String uid1, String uid2) {
         try {
             //检查是否已经存在对话
             String existConversation = selectExistConversation(uid1, uid2);
             System.out.println("existConversation: " + existConversation);
             if (existConversation != null)
             {
-                System.out.println("Conversation exist");
+                System.out.println("[-] Conversation exist. No need to create new conversation." +
+                        " cid: " + existConversation);
                 return existConversation;
             }
 
@@ -358,6 +343,39 @@ public class DatabaseOperator {
             stmt.setString(1, cid);
             stmt.setString(2, uid1);
             stmt.setString(3, uid2);
+            stmt.executeUpdate();
+            return cid;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public String checkConversationIDByEmail(String uid1, String email) {
+        try {
+            //检查是否已经存在对话
+            String fid = checkUserInfoByEmail(email).getString("uid");
+            String existConversation = selectExistConversation(uid1,fid);
+            if (existConversation != null)
+            {
+                System.out.println("[-] Conversation exist. No need to create new conversation. cid: "
+                        + existConversation);
+                return existConversation;
+            }
+
+            //创建新的对话
+            sql = "INSERT INTO conversations (cid) VALUES (?);";
+            stmt = databaseConnector.getConnection().prepareStatement(sql);
+            cid = generateUID();
+            stmt.setString(1, cid);
+            stmt.executeUpdate();
+
+            //将用户绑定到对话
+            sql = "INSERT INTO user_conversations (cid,uid1,uid2) VALUES (?, ?, ?);";
+            stmt = databaseConnector.getConnection().prepareStatement(sql);
+            stmt.setString(1, cid);
+            stmt.setString(2, uid1);
+            stmt.setString(3, fid);
             stmt.executeUpdate();
             return cid;
         } catch (SQLException e) {

@@ -91,8 +91,12 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
                      responseJson = handleGetLatestMessage(requestJson);
                     break;
 
-                case "getConversationID":
-                    responseJson = handleGetConversationID(requestJson.getString("uid"), requestJson.getString("fid"));
+                case "getConversationIDByID":
+                    responseJson = handleGetConversationIDByID(requestJson.getString("uid"), requestJson.getString("fid"));
+                    break;
+
+                case "getConversationIDByEmail":
+                    responseJson = handleGetConversationIDByEmail(requestJson.getString("uid"), requestJson.getString("email"));
                     break;
 
                 case "addNewFriend":
@@ -297,10 +301,18 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         response.put("success", result);
         return response;
     }
-    public JSONObject handleGetConversationID(String uid, String fid) throws SQLException {
-        String cid = databaseOperator.checkConversationID(uid, fid);
+    public JSONObject handleGetConversationIDByEmail(String uid, String email) throws SQLException {
+        String cid = databaseOperator.checkConversationIDByEmail(uid, email);
         JSONObject response = new JSONObject();
-        response.put("action", "getConversationID");
+        response.put("action", "getConversationIDByEmail");
+        response.put("cid", cid);
+        return response;
+    }
+
+    public JSONObject handleGetConversationIDByID(String uid, String fid) throws SQLException {
+        String cid = databaseOperator.checkConversationIDByID(uid, fid);
+        JSONObject response = new JSONObject();
+        response.put("action", "getConversationIDByID");
         response.put("cid", cid);
         return response;
     }

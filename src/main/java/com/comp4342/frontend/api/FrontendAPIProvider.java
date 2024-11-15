@@ -75,8 +75,12 @@ public class FrontendAPIProvider extends WebSocketClient {
                 handleGetLatestMessageResponse(response);
                 break;
 
-            case "getConversationID":
-                handleGetConversationIDResponse(response);
+            case "getConversationIDByID":
+                handleGetConversationIDByIDResponse(response);
+                break;
+
+            case "getConversationIDByEmail":
+                handleGetConversationIDByEmailResponse(response);
                 break;
 
             case "addNewFriend":
@@ -121,10 +125,13 @@ public class FrontendAPIProvider extends WebSocketClient {
 
             case "register":
                 handleRegisterResponse(response);
-            case "startConversation":
-                handleGetConversationID(response);
+            case "startConversationByID":
+                handleGetConversationIDByIDResponse(response);
                 break;
 
+            case "startConversationByEmail":
+                handleGetConversationIDByEmailResponse(response);
+                break;
 
 
                 //服务器推送给所有客户端
@@ -206,7 +213,13 @@ public class FrontendAPIProvider extends WebSocketClient {
         System.out.println("[←][Server & Client] Is friend request accept result: " + success);
     }
 
-    private void handleGetConversationIDResponse(JSONObject response) {
+    private void handleGetConversationIDByIDResponse(JSONObject response) {
+        success = response.optBoolean("success", false);
+        action = response.optString("action");
+        cid = response.optString("cid");
+        System.out.println("[←][Server & Client] Get conversation ID result: " + success);
+    }
+    private void handleGetConversationIDByEmailResponse(JSONObject response) {
         success = response.optBoolean("success", false);
         action = response.optString("action");
         cid = response.optString("cid");
@@ -239,12 +252,7 @@ public class FrontendAPIProvider extends WebSocketClient {
         System.out.println("[←][Server & Client] Add new friend result: " + success);
     }
 
-    private void handleGetConversationID(JSONObject response) {
-        success = response.optBoolean("success", false);
-        action = response.optString("action");
-        cid = response.optString("cid");
-        System.out.println("[←][Server & Client] Start conversation result: " + success);
-    }
+
 
 
 
@@ -365,11 +373,21 @@ public void sendRegisterRequest(String uname, String email, String password) {
         System.out.println("[→][Client] Sent get latest message request: " + getLatestMessageRequest);
     }
 
-    public void getConversationID(String uid, String fid) {
+    public void getConversationIDByID(String uid, String fid) {
         JSONObject getConversationIDRequest = new JSONObject();
-        getConversationIDRequest.put("action", "getConversationID");
+        getConversationIDRequest.put("action", "getConversationIDByID");
         getConversationIDRequest.put("uid", uid);
         getConversationIDRequest.put("fid", fid);
+
+        send(getConversationIDRequest.toString());  // 发送 JSON 请求
+        System.out.println("[→][Client] Sent get conversation ID request: " + getConversationIDRequest);
+    }
+
+    public void getConversationIDByEmail(String uid, String email) {
+        JSONObject getConversationIDRequest = new JSONObject();
+        getConversationIDRequest.put("action", "getConversationIDByEmail");
+        getConversationIDRequest.put("uid", uid);
+        getConversationIDRequest.put("email", email);
 
         send(getConversationIDRequest.toString());  // 发送 JSON 请求
         System.out.println("[→][Client] Sent get conversation ID request: " + getConversationIDRequest);
