@@ -110,7 +110,6 @@ public class DatabaseOperator {
                 resultJson.put("email", resultSet.getString("email"));
                 resultJson.put("action", "getUserInfoByEmail");
                 resultJson.put("success", true);
-
                 return resultJson;  // 成功返回数据
             } else {
                 return null;
@@ -194,7 +193,7 @@ public class DatabaseOperator {
 
 
     public boolean checkIsFriend(String uid, String fid) throws SQLException{
-        sql = "select uid,fid from friendlist where ((uid = ? AND fid = ?) OR (uid = ? AND fid = ?)) AND (status = \"accepted\");";
+        sql = "select uid,fid from friendlist where ((uid = ? AND fid = ?) OR (uid = ? AND fid = ?)) AND (status = 'accepted');";
         try {
             stmt = databaseConnector.getConnection().prepareStatement(sql);
             stmt.setString(1, uid);

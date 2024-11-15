@@ -112,8 +112,11 @@ public class FrontendAPIProvider extends WebSocketClient {
                 handleIsUserOnlineResponse(response);
                 break;
 
-            case "isFriend":
-                handleIsFriendResponse(response);
+            case "isFriendByEmail":
+                handleIsFriendByEmailResponse(response);
+                break;
+            case "isFriendByUID":
+                handleIsFriendByUIDResponse(response);
                 break;
 
             case "register":
@@ -134,11 +137,16 @@ public class FrontendAPIProvider extends WebSocketClient {
         }
     }
 
-    private void handleIsFriendResponse(JSONObject response) {
+    private void handleIsFriendByEmailResponse(JSONObject response) {
         success = response.optBoolean("success", false);
         action = response.optString("action");
         System.out.println("[←][Server & Client] Is friend result: " + success);
+    }
 
+    private void handleIsFriendByUIDResponse(JSONObject response) {
+        success = response.optBoolean("success", false);
+        action = response.optString("action");
+        System.out.println("[←][Server & Client] Is friend result: " + success);
     }
 
     private void handleIsUserOnlineResponse(JSONObject response) {
@@ -464,10 +472,20 @@ public void sendRegisterRequest(String uname, String email, String password) {
         System.out.println("[→][Client] Sent is user online request: " + isUserOnlineRequest);
     }
 
-    public void isFriend(String uid, String fid)
+    public void isFriendByEmail(String uid, String email)
     {
         JSONObject isFriendRequest = new JSONObject();
-        isFriendRequest.put("action", "isFriend");
+        isFriendRequest.put("action", "isFriendByEmail");
+        isFriendRequest.put("uid", uid);
+        isFriendRequest.put("email", email);
+
+        send(isFriendRequest.toString());  // 发送 JSON 请求
+        System.out.println("[→][Client] Sent is friend request: " + isFriendRequest);
+    }
+    public void isFriendByUID(String uid, String fid)
+    {
+        JSONObject isFriendRequest = new JSONObject();
+        isFriendRequest.put("action", "isFriendByUID");
         isFriendRequest.put("uid", uid);
         isFriendRequest.put("fid", fid);
 

@@ -19,6 +19,8 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Calendar;
 
+import static java.lang.Thread.sleep;
+
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.comp4342.backend.database", "com.comp4342.backend.api"})
@@ -128,9 +130,14 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
                     responseJson = handleIsUserOnline(requestJson);
                     break;
 
-                case "isFriend":
-                    responseJson = handleIsFriend(requestJson);
+                case "isFriendByEmail":
+                    responseJson = handleIsFriendByEmail(requestJson);
                     break;
+
+                case "isFriendByUID":
+                    responseJson = handleIsFriendByUID(requestJson);
+                    break;
+
 
 
                 case "login":
@@ -156,11 +163,21 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         session.sendMessage(new TextMessage(responseJson.toString()));
     }
 
-    private JSONObject handleIsFriend(JSONObject requestJson) throws SQLException {
+    private JSONObject handleIsFriendByEmail(JSONObject requestJson) throws SQLException, InterruptedException {
+        System.out.println("!!! Backend Received JSON:" + requestJson.toString());
         JSONObject friendInfo = databaseOperator.checkUserInfoByEmail(requestJson.getString("email"));
-        boolean result= databaseOperator.checkIsFriend(requestJson.getString("uid"), friendInfo.getString("email"));
+        sleep(1000);
+        boolean result= databaseOperator.checkIsFriend(requestJson.getString("uid"), friendInfo.getString("uid"));
         JSONObject response = new JSONObject();
-        response.put("action", "isFriend");
+        response.put("action", "isFriendByEmail");
+        response.put("success", result);
+        return response;
+    }
+
+    private JSONObject handleIsFriendByUID(JSONObject requestJson) throws SQLException {
+        boolean result = databaseOperator.checkIsFriend(requestJson.getString("uid"), requestJson.getString("fid"));
+        JSONObject response = new JSONObject();
+        response.put("action", "isFriendByUID");
         response.put("success", result);
         return response;
     }

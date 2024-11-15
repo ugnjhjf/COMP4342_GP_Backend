@@ -11,11 +11,17 @@ public class FrontendAPIProviderTest {
 
     // 提供的用户 ID
     private String uid_rokidna2 = "3964a988-8b32-42f3-9d11-14b75eb1b925";
-    private String uid_Tekon2 = "184bc12a-2b5e-41a4-8342-d997ca0e7666";
+
     private String email_Tekon2 = "Tekon@exdample.com";
 
-    private String uid_newName = "3964a988-8b32-42f3-9d11-14b75eb1b925";
+
     private String uid_Tevck = "267c693e-0e89-4a7d-bcdf-f1cc953b0027";
+
+    //Not Friend
+    private String uid_Tekon = "78dfad2c-1405-44f9-81b2-978ac29e8e86";
+    //IsFriend
+    private String uid_Tekon2 = "184bc12a-2b5e-41a4-8342-d997ca0e7666";
+    private String uid_newName = "3964a988-8b32-42f3-9d11-14b75eb1b925";
 
     public FrontendAPIProviderTest() throws URISyntaxException, InterruptedException {
         // 初始化 WebSocket 客户端
@@ -24,13 +30,14 @@ public class FrontendAPIProviderTest {
         client.connectBlocking(); // 阻塞直到连接成功
     }
 
+
     public void runTests() throws InterruptedException {
 //        testRegister();
 //        testLogin();
 
 
 
-//        testGetConversationID();
+        testGetConversationID();
 //        testAddNewFriend();
 //        testAddNewFriend2();
 //        sleep(1000);
@@ -44,12 +51,16 @@ public class FrontendAPIProviderTest {
 //        testGetUserInfoByUID();
 //        testGetUserInfoByEmail();
 //        testGetUserFriendList();
+        //
+//        testIsUserOnline();
+//        testIsFriendByEmail();
+////        testIsFriendByEmail2();
+//        testIsFriendByUID();
+//        testIsFriendByUID2();
         //Pass Test↑
 
 
 
-        testIsUserOnline();
-//        testIsFriend();
 //        testSendNewMessage();
 //        testGetLatestMessage();
 //        testGetAllMessages();
@@ -69,11 +80,15 @@ public class FrontendAPIProviderTest {
     }
 
     private void testGetConversationID() throws InterruptedException {
-        client.getConversationID(uid_rokidna2, email_Tekon2);
+        client.getConversationID(uid_Tekon2, "rokidna2@gnetwork.com");
         sleep(1000);
         System.out.println("Get Conversation ID Test - CID: " + client.cid);
     }
-
+    private void testGetConversationID2() throws InterruptedException {
+        client.getConversationID(uid_Tekon2, "rokidna2@gnetwork.com");
+        sleep(1000);
+        System.out.println("Get Conversation ID Test - CID: " + client.cid);
+    }
     private void testAddNewFriend() throws InterruptedException {
         client.addNewFriend(uid_rokidna2, email_Tekon2);
         sleep(1000);
@@ -142,14 +157,32 @@ public class FrontendAPIProviderTest {
         System.out.println("Is User Online Test - Success: " + client.success);
     }
 
-    private void testIsFriend() throws InterruptedException {
-        client.isFriend(uid_rokidna2, uid_Tekon2);
+    private void testIsFriendByEmail() throws InterruptedException {
+        client.isFriendByEmail("3964a988-8b32-42f3-9d11-14b75eb1b925", email_Tekon2);
+        sleep(1000);
+        System.out.println("Is Friend Test - Success: " + client.success);
+    }
+
+    private void testIsFriendByEmail2() throws InterruptedException {
+        client.isFriendByEmail("3964a988-8b32-42f3-9d11-14b75eb1b925", "Tekon");
+        sleep(1000);
+        System.out.println("Is Friend Test - Success: " + client.success);
+    }
+
+    private void testIsFriendByUID() throws InterruptedException {
+        client.isFriendByUID(uid_Tekon,uid_Tekon2 ); //Expect False
+        sleep(1000);
+        System.out.println("Is Friend Test - Success: " + client.success);
+    }
+
+    private void testIsFriendByUID2() throws InterruptedException {
+        client.isFriendByUID(uid_newName, uid_Tekon2);
         sleep(1000);
         System.out.println("Is Friend Test - Success: " + client.success);
     }
 
     private void testSendNewMessage() throws InterruptedException {
-        client.sendNewMessage(uid_rokidna2, uid_Tekon2, "Hello!");
+        client.sendNewMessage(uid_Tekon2, uid_newName, "Hello!");
         sleep(1000);
         System.out.println("Send New Message Test - Success: " + client.success);
     }
