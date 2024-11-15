@@ -301,11 +301,16 @@ public class DatabaseOperator {
         }
     }
     public String selectExistConversation(String uid1, String uid2){
-        sql = "SELECT cid FROM conversations WHERE cid IN (SELECT cid FROM user_conversations WHERE uid1 = ?) AND cid IN (SELECT cid FROM user_conversations WHERE uid2 = ?);";
+        sql = "SELECT cid FROM conversations WHERE cid IN"+
+                "(SELECT cid FROM user_conversations WHERE " +
+                "(uid1 = ? AND uid2 = ?) OR (uid1 = ? AND uid2 = ?));";
+
         try {
             stmt = databaseConnector.getConnection().prepareStatement(sql);
             stmt.setString(1, uid1);
             stmt.setString(2, uid2);
+            stmt.setString(3, uid2);
+            stmt.setString(4, uid1);
             resultSet = stmt.executeQuery();  // 执行查询
             if (resultSet.next()) {  // 判断是否有结果
                 return resultSet.getString("cid");

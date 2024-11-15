@@ -30,7 +30,9 @@ public class FrontendAPIProviderTest {
 //         testAddNewFriend(uid_rokidna,email_tekon);
 //         testGetConversationIDByEmail(uid_rokidna,email_tekon);
          testGetConversationIDByID(uid_rokidna,uid_tekon);
-         testSendNewMessage(uid_rokidna,uid_tekon,"Hello Tekon");
+         testSendNewMessage(uid_tekon,uid_rokidna,"Hello Rokidna");
+         sleep(1000);
+        testSendNewMessage(uid_rokidna,uid_tekon,"Hello Tekon");
 //        testLogin("Rokidna@gnetwork.com", "password123");
     }
 
