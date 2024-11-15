@@ -1,4 +1,4 @@
-package com.comp4342.frontend.api;
+package com.comp4342.frontend.legacy;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;

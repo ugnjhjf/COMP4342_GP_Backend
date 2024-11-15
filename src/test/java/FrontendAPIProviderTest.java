@@ -14,6 +14,9 @@ public class FrontendAPIProviderTest {
     private String uid_Tekon2 = "184bc12a-2b5e-41a4-8342-d997ca0e7666";
     private String email_Tekon2 = "Tekon@exdample.com";
 
+    private String uid_newName = "3964a988-8b32-42f3-9d11-14b75eb1b925";
+    private String uid_Tevck = "267c693e-0e89-4a7d-bcdf-f1cc953b0027";
+
     public FrontendAPIProviderTest() throws URISyntaxException, InterruptedException {
         // 初始化 WebSocket 客户端
         URI serverURI = new URI("ws://localhost:8080/backend-api");
@@ -29,8 +32,10 @@ public class FrontendAPIProviderTest {
 
 //        testGetConversationID();
 //        testAddNewFriend();
+//        testAddNewFriend2();
 //        sleep(1000);
 //        testIsFriendRequestAccept();
+//        testIsFriendRequestAccept2();
 
 
 //        testDeleteFriend();
@@ -38,12 +43,12 @@ public class FrontendAPIProviderTest {
 //        testChangeName();
 //        testGetUserInfoByUID();
 //        testGetUserInfoByEmail();
-
+//        testGetUserFriendList();
         //Pass Test↑
 
 
-//        testGetUserFriendList();
-//        testIsUserOnline();
+
+        testIsUserOnline();
 //        testIsFriend();
 //        testSendNewMessage();
 //        testGetLatestMessage();
@@ -75,8 +80,20 @@ public class FrontendAPIProviderTest {
         System.out.println("Add New Friend Test - Success: " + client.success);
     }
 
+    private void testAddNewFriend2() throws InterruptedException {
+        client.addNewFriend("78dfad2c-1405-44f9-81b2-978ac29e8e86", "Tekon@exdample.com");
+        sleep(1000);
+        System.out.println("Add New Friend Test - Success: " + client.success);
+    }
+
     private void testIsFriendRequestAccept() throws InterruptedException {
         client.isFriendRequestAccept(uid_Tekon2, uid_rokidna2, "accepted");
+        sleep(1000);
+        System.out.println("Is Friend Request Accept Test - Success: " + client.success);
+    }
+
+    private void testIsFriendRequestAccept2() throws InterruptedException {
+        client.isFriendRequestAccept("45361cfc-b7ef-4e2b-860d-02fd1515e2d7 ","78dfad2c-1405-44f9-81b2-978ac29e8e86" , "accepted");
         sleep(1000);
         System.out.println("Is Friend Request Accept Test - Success: " + client.success);
     }
@@ -112,10 +129,12 @@ public class FrontendAPIProviderTest {
     }
 
     private void testGetUserFriendList() throws InterruptedException {
-        client.getUserFriendList(uid_rokidna2);
+        client.getUserFriendList(uid_Tekon2);
         sleep(1000);
         System.out.println("Get User Friend List Test - Friend List: " + client.friend_list);
     }
+
+
 
     private void testIsUserOnline() throws InterruptedException {
         client.isUserOnline(uid_rokidna2);

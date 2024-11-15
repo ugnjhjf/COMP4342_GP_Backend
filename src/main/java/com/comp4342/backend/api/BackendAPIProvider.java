@@ -44,6 +44,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
     // 启动服务器
     // 将 WebSocket 处理程序注册为 Spring Bean
 
+
     // WebSocket 的路由（访问地址）
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
@@ -160,7 +161,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         boolean result= databaseOperator.checkIsFriend(requestJson.getString("uid"), friendInfo.getString("email"));
         JSONObject response = new JSONObject();
         response.put("action", "isFriend");
-        response.put("isFriend", result);
+        response.put("success", result);
         return response;
     }
 
@@ -169,7 +170,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         boolean result = databaseOperator.checkUserIsOnline(uid);
         JSONObject response = new JSONObject();
         response.put("action", "isUserOnline");
-        response.put("isOnline", result);
+        response.put("success", result);
         return response;
     }
 
