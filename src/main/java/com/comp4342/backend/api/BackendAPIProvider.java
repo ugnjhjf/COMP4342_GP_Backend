@@ -293,7 +293,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
     private JSONObject handleSendNewMessage(JSONObject requestJson) {
         String uid = requestJson.getString("uid");
         String content = requestJson.getString("content");
-        String cid = requestJson.getString("fid");
+        String cid = databaseOperator.checkConversationIDByID(uid, requestJson.getString("fid"));
         Date date = new Date(System.currentTimeMillis());
         boolean result =  databaseOperator.insertNewMessage(cid, uid, content);
         JSONObject response = new JSONObject();
