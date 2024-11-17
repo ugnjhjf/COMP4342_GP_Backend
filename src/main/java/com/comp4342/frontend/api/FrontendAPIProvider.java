@@ -1,4 +1,5 @@
 package com.comp4342.frontend.api;
+//package com.example.FrontendApi;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -25,6 +26,8 @@ public class FrontendAPIProvider extends WebSocketClient {
     public String email;
     public String cid; //目前对话的id
 
+    // 修改了前端这里的API，我需要用到这个response json文件，就把他单独摘出来了
+    public JSONObject response = null;
 
     // 构造函数，初始化 WebSocket 客户端
     public FrontendAPIProvider(URI serverURI) {
@@ -48,7 +51,7 @@ public class FrontendAPIProvider extends WebSocketClient {
     // 接收并处理来自服务器的消息
     @Override
     public void onMessage(String message) {
-        JSONObject response = null;
+
         try {
             response = new JSONObject(message);
         } catch (JSONException e) {
@@ -134,7 +137,7 @@ public class FrontendAPIProvider extends WebSocketClient {
                 break;
 
 
-                //服务器推送给所有客户端
+            //服务器推送给所有客户端
             case "serverPush":
                 handleServerPush(response);
                 break;
@@ -143,6 +146,8 @@ public class FrontendAPIProvider extends WebSocketClient {
                 break;
         }
     }
+
+
 
     private void handleIsFriendByEmailResponse(JSONObject response) {
         success = response.optBoolean("success", false);
@@ -213,6 +218,7 @@ public class FrontendAPIProvider extends WebSocketClient {
         System.out.println("[←][Server & Client] Is friend request accept result: " + success);
     }
 
+
     private void handleGetConversationIDByIDResponse(JSONObject response) {
         success = response.optBoolean("success", false);
         action = response.optString("action");
@@ -225,14 +231,12 @@ public class FrontendAPIProvider extends WebSocketClient {
         cid = response.optString("cid");
         System.out.println("[←][Server & Client] Get conversation ID result: " + success);
     }
-
     private void handleGetLatestMessageResponse(JSONObject response) {
         action = response.optString("action");
         latest_message = response;
-        System.out.println("Latest message: " + latest_message);
+        System.out.println("Latest message: " + latest_message.toString());
         System.out.println("[←][Server & Client] Get latest message result: " + success);
     }
-
     private void handleSendNewMessageResponse(JSONObject response) {
         success = response.optBoolean("success", false);
         action = response.optString("action");
@@ -245,14 +249,11 @@ public class FrontendAPIProvider extends WebSocketClient {
         all_message = response.optJSONArray("uid");
         System.out.println("[←][Server & Client] Get all messages result: " + success);
     }
-
     private void handleAddNewFriendResponse(JSONObject response) {
         success = response.optBoolean("success", false);
         action = response.optString("action");
         System.out.println("[←][Server & Client] Add new friend result: " + success);
     }
-
-
 
 
 
@@ -310,28 +311,7 @@ public class FrontendAPIProvider extends WebSocketClient {
     //---------------------------------以上是处理服务器回应的方法------------------------------
 //---------------------------------以下是客户端发起的请求---------------------------------
 // 发送注册请求示例方法
-public void sendRegisterRequest(String uname, String email, String password) {
-    JSONObject registerRequest = new JSONObject();
-    registerRequest.put("action", "register");
-    registerRequest.put("uname", uname);
-    registerRequest.put("email", email);
-    registerRequest.put("password", password);
-
-    send(registerRequest.toString());  // 发送 JSON 请求
-    System.out.println("[→][Client] Sent register request: " + registerRequest);
-}
-
-//    public void sendStartConversationRequest(String uid, String fid, String content) {
-//        JSONObject ConversationRequest = new JSONObject();
-//        ConversationRequest.put("action", "startConversation");
-//        ConversationRequest.put("uid", uid);
-//        ConversationRequest.put("fid", fid);
-//        ConversationRequest.put("content", content);
-//
-//        send(ConversationRequest.toString());  // 发送 JSON 请求
-//        System.out.println("[→][Client] Sent register request: " + ConversationRequest);
-//    }
-    public void register(String uname, String email, String password) {
+    public void sendRegisterRequest(String uname, String email, String password) throws JSONException {
         JSONObject registerRequest = new JSONObject();
         registerRequest.put("action", "register");
         registerRequest.put("uname", uname);
@@ -342,7 +322,19 @@ public void sendRegisterRequest(String uname, String email, String password) {
         System.out.println("[→][Client] Sent register request: " + registerRequest);
     }
 
-    public void getAllMessage(String uid, String fid) {
+
+    public void register(String uname, String email, String password) throws JSONException {
+        JSONObject registerRequest = new JSONObject();
+        registerRequest.put("action", "register");
+        registerRequest.put("uname", uname);
+        registerRequest.put("email", email);
+        registerRequest.put("password", password);
+
+        send(registerRequest.toString());  // 发送 JSON 请求
+        System.out.println("[→][Client] Sent register request: " + registerRequest);
+    }
+
+    public void getAllMessage(String uid, String fid) throws JSONException {
         JSONObject getAllMessageRequest = new JSONObject();
         getAllMessageRequest.put("action", "getAllMessage");
         getAllMessageRequest.put("uid", uid);
@@ -352,7 +344,9 @@ public void sendRegisterRequest(String uname, String email, String password) {
         System.out.println("[→][Client] Sent get all message request: " + getAllMessageRequest);
     }
 
-    public void sendNewMessage(String uid, String fid, String content) {
+
+
+    public void sendNewMessage(String uid, String fid, String content) throws JSONException {
         JSONObject sendNewMessageRequest = new JSONObject();
         sendNewMessageRequest.put("action", "sendNewMessage");
         sendNewMessageRequest.put("uid", uid);
@@ -363,7 +357,7 @@ public void sendRegisterRequest(String uname, String email, String password) {
         System.out.println("[→][Client] Sent send new message request: " + sendNewMessageRequest);
     }
 
-    public void getLatestMessage(String uid, String fid) {
+    public void getLatestMessage(String uid, String fid) throws JSONException {
         JSONObject getLatestMessageRequest = new JSONObject();
         getLatestMessageRequest.put("action", "getLatestMessage");
         getLatestMessageRequest.put("uid", uid);
@@ -373,17 +367,7 @@ public void sendRegisterRequest(String uname, String email, String password) {
         System.out.println("[→][Client] Sent get latest message request: " + getLatestMessageRequest);
     }
 
-    public void getConversationIDByID(String uid, String fid) {
-        JSONObject getConversationIDRequest = new JSONObject();
-        getConversationIDRequest.put("action", "getConversationIDByID");
-        getConversationIDRequest.put("uid", uid);
-        getConversationIDRequest.put("fid", fid);
-
-        send(getConversationIDRequest.toString());  // 发送 JSON 请求
-        System.out.println("[→][Client] Sent get conversation ID request: " + getConversationIDRequest);
-    }
-
-    public void getConversationIDByEmail(String uid, String email) {
+    public void getConversationIDByEmail(String uid, String email) throws JSONException {
         JSONObject getConversationIDRequest = new JSONObject();
         getConversationIDRequest.put("action", "getConversationIDByEmail");
         getConversationIDRequest.put("uid", uid);
@@ -394,8 +378,7 @@ public void sendRegisterRequest(String uname, String email, String password) {
     }
 
 
-    public void addNewFriend(String uid, String email)
-    {
+    public void addNewFriend(String uid, String email) throws JSONException {
         JSONObject addNewFriendRequest = new JSONObject();
         addNewFriendRequest.put("action", "addNewFriend");
         addNewFriendRequest.put("uid", uid);
@@ -405,8 +388,8 @@ public void sendRegisterRequest(String uname, String email, String password) {
         System.out.println("[→][Client] Sent add new friend request: " + addNewFriendRequest);
     }
 
-    public void isFriendRequestAccept(String uid, String fid,String status)
-    {
+    // Todo: 待和UG这个方法，我需要看后台数据库pwp
+    public void isFriendRequestAccept(String uid, String fid,String status) throws JSONException {
         JSONObject isFriendRequestAcceptRequest = new JSONObject();
         isFriendRequestAcceptRequest.put("action", "isFriendRequestAccept");
         isFriendRequestAcceptRequest.put("uid", uid);
@@ -417,8 +400,8 @@ public void sendRegisterRequest(String uname, String email, String password) {
         System.out.println("[→][Client] Sent is friend request accept request: " + isFriendRequestAcceptRequest);
     }
 
-    public void deleteFriend(String uid, String fid)
-    {
+    // Todo: 同上
+    public void deleteFriend(String uid, String fid) throws JSONException {
         JSONObject deleteFriendRequest = new JSONObject();
         deleteFriendRequest.put("action", "deleteFriend");
         deleteFriendRequest.put("uid", uid);
@@ -428,8 +411,7 @@ public void sendRegisterRequest(String uname, String email, String password) {
         System.out.println("[→][Client] Sent delete friend request: " + deleteFriendRequest);
     }
 
-    public void changePassword(String uid, String password)
-    {
+    public void changePassword(String uid, String password) throws JSONException {
         JSONObject changePasswordRequest = new JSONObject();
         changePasswordRequest.put("action", "changePassword");
         changePasswordRequest.put("uid", uid);
@@ -439,8 +421,7 @@ public void sendRegisterRequest(String uname, String email, String password) {
         System.out.println("[→][Client] Sent change password request: " + changePasswordRequest);
     }
 
-    public void changeName(String uid, String uname)
-    {
+    public void changeName(String uid, String uname) throws JSONException {
         JSONObject changeNameRequest = new JSONObject();
         changeNameRequest.put("action", "changeName");
         changeNameRequest.put("uid", uid);
@@ -450,8 +431,7 @@ public void sendRegisterRequest(String uname, String email, String password) {
         System.out.println("[→][Client] Sent change name request: " + changeNameRequest);
     }
 
-    public void getUserInfoByUID(String uid)
-    {
+    public void getUserInfoByUID(String uid) throws JSONException {
         JSONObject getUserInfoByUIDRequest = new JSONObject();
         getUserInfoByUIDRequest.put("action", "getUserInfoByUID");
         getUserInfoByUIDRequest.put("uid", uid);
@@ -460,8 +440,7 @@ public void sendRegisterRequest(String uname, String email, String password) {
         System.out.println("[→][Client] Sent get user info by UID request: " + getUserInfoByUIDRequest);
     }
 
-    public void getUserInfoByEmail(String email)
-    {
+    public void getUserInfoByEmail(String email) throws JSONException {
         JSONObject getUserInfoByEmailRequest = new JSONObject();
         getUserInfoByEmailRequest.put("action", "getUserInfoByEmail");
         getUserInfoByEmailRequest.put("email", email);
@@ -470,8 +449,7 @@ public void sendRegisterRequest(String uname, String email, String password) {
         System.out.println("[→][Client] Sent get user info by email request: " + getUserInfoByEmailRequest);
     }
 
-    public void getUserFriendList(String uid)
-    {
+    public void getUserFriendList(String uid) throws JSONException {
         JSONObject getUserFriendListRequest = new JSONObject();
         getUserFriendListRequest.put("action", "getUserFriendList");
         getUserFriendListRequest.put("uid", uid);
@@ -480,8 +458,7 @@ public void sendRegisterRequest(String uname, String email, String password) {
         System.out.println("[→][Client] Sent get user friend list request: " + getUserFriendListRequest);
     }
 
-    public void isUserOnline(String uid)
-    {
+    public void isUserOnline(String uid) throws JSONException {
         JSONObject isUserOnlineRequest = new JSONObject();
         isUserOnlineRequest.put("action", "isUserOnline");
         isUserOnlineRequest.put("uid", uid);
@@ -490,8 +467,7 @@ public void sendRegisterRequest(String uname, String email, String password) {
         System.out.println("[→][Client] Sent is user online request: " + isUserOnlineRequest);
     }
 
-    public void isFriendByEmail(String uid, String email)
-    {
+    public void isFriendByEmail(String uid, String email) throws JSONException {
         JSONObject isFriendRequest = new JSONObject();
         isFriendRequest.put("action", "isFriendByEmail");
         isFriendRequest.put("uid", uid);
@@ -500,8 +476,7 @@ public void sendRegisterRequest(String uname, String email, String password) {
         send(isFriendRequest.toString());  // 发送 JSON 请求
         System.out.println("[→][Client] Sent is friend request: " + isFriendRequest);
     }
-    public void isFriendByUID(String uid, String fid)
-    {
+    public void isFriendByUID(String uid, String fid) throws JSONException {
         JSONObject isFriendRequest = new JSONObject();
         isFriendRequest.put("action", "isFriendByUID");
         isFriendRequest.put("uid", uid);
@@ -511,7 +486,7 @@ public void sendRegisterRequest(String uname, String email, String password) {
         System.out.println("[→][Client] Sent is friend request: " + isFriendRequest);
     }
 
-    public void login(String email, String password) {
+    public void login(String email, String password) throws JSONException {
         JSONObject loginRequest = new JSONObject();
         loginRequest.put("action", "login");
         loginRequest.put("email", email);
