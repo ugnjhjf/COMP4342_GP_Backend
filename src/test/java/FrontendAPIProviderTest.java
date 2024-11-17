@@ -37,12 +37,12 @@ public class FrontendAPIProviderTest {
         testGetLatestMessage(uid_rokidna,uid_tekon);
 //        testLogin("Rokidna@gnetwork.com", "password123");
     }
-
-    private void testGetConversationIDByID(String uidRokidna, String uidTekon) throws InterruptedException {
-        client.getConversationIDByID(uidRokidna,uidTekon);
-        sleep(1000);
-        System.out.println("Get Conversation ID Test - CID: " + client.cid);
-    }
+//
+//    private void testGetConversationIDByID(String uidRokidna, String uidTekon) throws InterruptedException {
+//        client.getConversationIDByID(uidRokidna,uidTekon);
+//        sleep(1000);
+//        System.out.println("Get Conversation ID Test - CID: " + client.cid);
+//    }
 
     private void testRegister(String uname, String email, String password) throws InterruptedException {
         client.register(uname, email, password);

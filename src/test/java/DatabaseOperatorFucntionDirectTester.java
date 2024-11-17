@@ -20,7 +20,9 @@ public class DatabaseOperatorFucntionDirectTester {
 //        testcheckUserInfoByEmail();
 //        testCheckUserIsOnline();
 //        testInsertNewFriend();
-        testCheckUserFriendlist();
+//        testCheckUserFriendlist();
+        testinsertNewFriend();
+        testcheckFriendRequestList();
 //        testinsertStartNewConversation();
 //        try {
 ////            testInsertNewFriend();
@@ -31,6 +33,12 @@ public class DatabaseOperatorFucntionDirectTester {
 //        testinsertStartNewConversation();
 //        testSelectExistConversation();
 //        testChangeName();
+    }
+    public static void testinsertNewFriend() throws SQLException {
+        String uid = databaseOperator.checkUserInfoByUID("7b2442e6-ae95-45f4-a2bf-c5a5b8051d6c").getString("uid"); ;
+        String fid = databaseOperator.checkUserInfoByUID("88025b94-3d23-4e19-93f6-d7e44f6e36cb").getString("uid");
+        boolean result = databaseOperator.insertNewFriend(uid, fid, "requested");
+        System.out.println("Insert result: " + result);
     }
     public static void testcheckUserInfoByEmail() throws SQLException {
         JSONObject resultJSON = databaseOperator.checkUserInfoByEmail("monika@uvuv.com");
@@ -96,7 +104,12 @@ public class DatabaseOperatorFucntionDirectTester {
             System.out.println("Incorrect password / User not exist");
         }
     }
-
+    public static void testcheckFriendRequestList()throws SQLException{
+        JSONArray resultJSON = databaseOperator.checkFriendRequestList("7b2442e6-ae95-45f4-a2bf-c5a5b8051d6c");
+        if (resultJSON != null) {
+            System.out.println(resultJSON.toString());
+        }
+    }
 
     public static void testinsertStartNewConversationByEmail() throws SQLException {
         String uid1 = uid_echidna;

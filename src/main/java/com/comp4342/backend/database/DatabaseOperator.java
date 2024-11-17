@@ -103,7 +103,30 @@ public class DatabaseOperator {
             return null;
         }
     }
+    public JSONArray checkFriendRequestList(String uid) throws SQLException{
+        String sql = "SELECT user.uname, friendlist.fid, friendlist.status,user.email " +
+                "FROM friendlist JOIN user ON friendlist.fid = user.uid WHERE" +
+                " friendlist.uid = ? AND friendlist.status = 'requested';";
 
+        try {
+            stmt = databaseConnector.getConnection().prepareStatement(sql);
+            stmt.setString(1, uid);
+            resultSet = stmt.executeQuery();  // 执行查询
+            JSONArray friendRequestList = new JSONArray();
+            while (resultSet.next()) {
+                JSONObject friendRequest = new JSONObject();
+                friendRequest.put("uid", resultSet.getString("fid"));
+                friendRequest.put("uname", resultSet.getString("uname"));
+                friendRequest.put("status", resultSet.getString("status"));
+                friendRequest.put("email", resultSet.getString("email"));
+                friendRequestList.put(friendRequest);
+            }
+            return friendRequestList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     public JSONArray checkUserFriendlist(String uid) throws SQLException {
         String sql = "SELECT DISTINCT user.uname, user.uid, friendlist.fid " +

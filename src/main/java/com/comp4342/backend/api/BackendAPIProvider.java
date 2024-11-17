@@ -130,6 +130,10 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
                     responseJson = handleGetUserFriendList(requestJson);
                     break;
 
+                    case "getFriendRequestList":
+                    responseJson = handleGetFriendRequestList(requestJson);
+                    break;
+
                 case "isUserOnline":
                     responseJson = handleIsUserOnline(requestJson);
                     break;
@@ -201,6 +205,15 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         JSONObject response = new JSONObject();
         response.put("action", "getUserFriendList");
         response.put("friendList", friendList);
+        return response;
+    }
+    private JSONObject handleGetFriendRequestList(JSONObject requestJson) throws SQLException {
+        String uid = requestJson.getString("uid");
+        JSONArray friendList = databaseOperator.checkFriendRequestList(uid);
+        JSONObject response = new JSONObject();
+        System.out.println("friendList: " + friendList);
+        response.put("action", "getFriendRequestList");
+        response.put("request_friendList", friendList);
         return response;
     }
 
