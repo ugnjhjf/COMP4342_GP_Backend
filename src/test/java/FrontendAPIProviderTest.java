@@ -35,8 +35,8 @@ public class FrontendAPIProviderTest {
 //        testSendNewMessage(uid_rokidna,uid_tekon,"Hello Tekon");
 //        testGetAllMessages(uid_rokidna,uid_tekon);
 //        testGetLatestMessage(uid_rokidna,uid_tekon);
-        testGetFriendRequestList(uid_tekon);
-        testGetUserFriendList(uid_tekon);
+//        testGetFriendRequestList(uid_tekon);
+        testGetUserFriendList("7b2442e6-ae95-45f4-a2bf-c5a5b8051d6c");
 //        testLogin("Rokidna@gnetwork.com", "password123");
     }
 

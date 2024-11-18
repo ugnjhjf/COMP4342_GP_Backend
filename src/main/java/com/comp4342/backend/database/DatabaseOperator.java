@@ -151,21 +151,22 @@ public class DatabaseOperator {
                     String friendFid = resultSet.getString("fid");
                     String uname = resultSet.getString("uname");
                     String email = resultSet.getString("email");
-
-                    // 判断是否为 uid 还是 fid，并获取对话 ID 和在线状态
+//
+//                    // 判断是否为 uid 还是 fid，并获取对话 ID 和在线状态
                     String friendId = uid.equals(friendUid) ? friendFid : friendUid;
-                    String cid = checkConversationIDByID(uid, friendId);
-                    boolean isOnline = checkUserIsOnline(friendId);
+//                    String cid = checkConversationIDByID(uid, friendId);
+//                    boolean isOnline = checkUserIsOnline(friendId);
 
                     // 将好友信息、cid 和在线状态填入 JSON 对象
-                    friend.put("fid", friendId);
+                    friend.put("uid", friendId);
                     friend.put("uname", uname);
                     friend.put("email", email);
                     friend.put("cid", cid);
-                    friend.put("isOnline", isOnline);
+//                    friend.put("isOnline", isOnline);
 
                     // 将好友的信息添加到 JSONArray 中
                     friendsList.put(friend);
+                    System.out.println("[-] Friend: " + friendsList.toString());
                 }
             }
         } catch (SQLException e) {
