@@ -104,7 +104,7 @@ public class DatabaseOperator {
         }
     }
     public JSONArray checkFriendRequestList(String uid) throws SQLException{
-        String sql = "SELECT user.uname, friendlist.fid, friendlist.status,user.email " +
+        String sql = "SELECT user.uname, user friendlist.fid, friendlist.status,user.email " +
                 "FROM friendlist JOIN user ON friendlist.fid = user.uid WHERE" +
                 " friendlist.fid = ? AND friendlist.status = 'requested';";
 
@@ -129,15 +129,11 @@ public class DatabaseOperator {
     }
 
     public JSONArray checkUserFriendlist(String uid) throws SQLException {
-        String sql = "SELECT DISTINCT user.uname, user.uid, user,email, friendlist.fid " +
-                "FROM friendlist " +
-                "JOIN user ON ( " +
-                "    (friendlist.uid = ? AND friendlist.fid = user.uid) " +
-                "    OR " +
-                "    (friendlist.fid = ? AND friendlist.uid = user.uid) " +
-                ") " +
-                "WHERE friendlist.status = 'accepted'";
-
+        String sql =
+                "SELECT user.uname, user.uid, friendlist.status,user.email  " +
+                "FROM friendlist JOIN user ON friendlist.fid = user.uid " +
+                "WHERE ((friendlist.fid = ?) OR " +
+                "(friendlist.uid = ? ))AND friendlist.status = 'requested';";
         JSONArray friendsList = new JSONArray();
 
         try (PreparedStatement stmt = databaseConnector.getConnection().prepareStatement(sql)) {
@@ -147,18 +143,12 @@ public class DatabaseOperator {
             try (ResultSet resultSet = stmt.executeQuery()) {
                 while (resultSet.next()) {
                     JSONObject friend = new JSONObject();
-                    String friendUid = resultSet.getString("uid");
-                    String friendFid = resultSet.getString("fid");
+                    String fid = resultSet.getString("uid");
                     String uname = resultSet.getString("uname");
                     String email = resultSet.getString("email");
-//
-//                    // 判断是否为 uid 还是 fid，并获取对话 ID 和在线状态
-                    String friendId = uid.equals(friendUid) ? friendFid : friendUid;
-//                    String cid = checkConversationIDByID(uid, friendId);
-//                    boolean isOnline = checkUserIsOnline(friendId);
 
                     // 将好友信息、cid 和在线状态填入 JSON 对象
-                    friend.put("uid", friendId);
+                    friend.put("uid", fid);
                     friend.put("uname", uname);
                     friend.put("email", email);
                     friend.put("cid", cid);
