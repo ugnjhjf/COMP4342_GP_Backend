@@ -104,7 +104,7 @@ public class DatabaseOperator {
         }
     }
     public JSONArray checkFriendRequestList(String uid) throws SQLException{
-        String sql = "SELECT user.uname, user friendlist.fid, friendlist.status,user.email " +
+        String sql = "SELECT user.uname, friendlist.fid, friendlist.status,user.email " +
                 "FROM friendlist JOIN user ON friendlist.fid = user.uid WHERE" +
                 " friendlist.fid = ? AND friendlist.status = 'requested';";
 
