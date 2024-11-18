@@ -85,7 +85,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
                     break;
                 case "sendNewMessage":
                     responseJson = handleSendNewMessage(requestJson);
-                    serverBroadcast(this.action);
+                    serverBroadcast(this.action,requestJson.getString("uid"),requestJson.getString("fid"));
                     break;
                 case "getLatestMessage":
                      responseJson = handleGetLatestMessage(requestJson);
@@ -101,7 +101,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
 
                 case "addNewFriend":
                     responseJson = handleAddNewFriend(requestJson);
-                    serverBroadcast(this.action);
+                    serverBroadcast(this.action,requestJson.getString("uid"),requestJson.getString("fid"));
                     break;
 
                 case "isFriendRequestAccept":
@@ -358,12 +358,12 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
     }
 
     //通知所有客户端有新消息cid, sid, content
-    private void serverBroadcast(String client_action) throws IOException {
+    private void serverBroadcast(String client_action,String uid,String fid) throws IOException {
         JSONObject responseJSON = new JSONObject();
         responseJSON.put("action", "serverPush");
         responseJSON.put("client_action",client_action);
-        responseJSON.put("uid", "1");
-        responseJSON.put("fid", "2");
+        responseJSON.put("uid", uid);
+        responseJSON.put("fid", fid);
 
         System.out.println("[←]RESPOND: Broadcast new message to ALL clients");
         this.session.sendMessage(new TextMessage(responseJSON.toString()));

@@ -465,6 +465,7 @@ public class DatabaseOperator {
             resultSet = stmt.executeQuery();  // 执行查询
             JSONObject response = new JSONObject();
             if (resultSet.next()) {  // 判断是否有结果
+                //sid,content,timestamp
                 response.put("sid", resultSet.getString("sid"));
                 response.put("content", resultSet.getString("content"));
                 response.put("timestamp", resultSet.getString("timestamp"));

@@ -13,7 +13,9 @@ import java.net.URISyntaxException;
 public class FrontendAPIProvider extends WebSocketClient {
     //Execute result
     public boolean success;
+
     public JSONObject latest_message;
+
     public JSONArray all_message;
     public JSONArray friend_list = new JSONArray();
     public JSONArray request_friendList = new JSONArray();

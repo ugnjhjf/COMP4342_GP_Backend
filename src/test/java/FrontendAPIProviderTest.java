@@ -32,11 +32,12 @@ public class FrontendAPIProviderTest {
 //         testGetConversationIDByID(uid_rokidna,uid_tekon);
 //         testSendNewMessage(uid_tekon,uid_rokidna,"Hello Rokidna");
 //         sleep(1000);
-//        testSendNewMessage(uid_rokidna,uid_tekon,"Hello Tekon");
+        testSendNewMessage(uid_tekon,uid_rokidna,"Hello Tekon");
 //        testGetAllMessages(uid_rokidna,uid_tekon);
 //        testGetLatestMessage(uid_rokidna,uid_tekon);
-        testGetFriendRequestList("13365bd6-f13e-4572-8e3b-68bfb15172e5");
-        testGetUserFriendList("13365bd6-f13e-4572-8e3b-68bfb15172e5");
+
+//        testGetFriendRequestList("13365bd6-f13e-4572-8e3b-68bfb15172e5");
+//        testGetUserFriendList("13365bd6-f13e-4572-8e3b-68bfb15172e5");
 //        testLogin("Rokidna@gnetwork.com", "password123");
     }
 
