@@ -15,8 +15,8 @@ public class FrontendAPIProvider extends WebSocketClient {
     public boolean success;
     public JSONObject latest_message;
     public JSONArray all_message;
-    public JSONArray friend_list;
-    public JSONArray request_friendList;
+    public JSONArray friend_list = new JSONArray();
+    public JSONArray request_friendList = new JSONArray();
 
     //User info
     public String action;
@@ -154,6 +154,7 @@ public class FrontendAPIProvider extends WebSocketClient {
     private void handleGetFriendRequestListResponse(JSONObject response) {
         success = response.optBoolean("success", false);
         action = response.optString("action");
+        System.out.println("Response" + response.toString());
         request_friendList = response.optJSONArray("request_friendList");
 
         System.out.println("[←][Server & Client] Get friend request list result: " + success);

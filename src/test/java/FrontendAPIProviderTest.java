@@ -23,7 +23,7 @@ public class FrontendAPIProviderTest {
          String uid_rokidna = "7b2442e6-ae95-45f4-a2bf-c5a5b8051d6c";
          String email_rokidna = "Rokidna@gnetwork.com";
 
-         String uid_tekon = "8150ebba-65f4-4792-9e07-71d5e86746fe";
+         String uid_tekon = "13365bd6-f13e-4572-8e3b-68bfb15172e5";
          String email_tekon = "Tekon@tech.com";
 
          //test
@@ -34,8 +34,15 @@ public class FrontendAPIProviderTest {
 //         sleep(1000);
 //        testSendNewMessage(uid_rokidna,uid_tekon,"Hello Tekon");
 //        testGetAllMessages(uid_rokidna,uid_tekon);
-        testGetLatestMessage(uid_rokidna,uid_tekon);
+//        testGetLatestMessage(uid_rokidna,uid_tekon);
+        testGetFriendRequestList(uid_tekon);
 //        testLogin("Rokidna@gnetwork.com", "password123");
+    }
+
+    private void testGetFriendRequestList(String uidTekon) throws InterruptedException {
+        client.getFriendRequestList(uidTekon);
+        sleep(1000);
+        System.out.println("Friend Request List: " + client.request_friendList);
     }
 //
 //    private void testGetConversationIDByID(String uidRokidna, String uidTekon) throws InterruptedException {
