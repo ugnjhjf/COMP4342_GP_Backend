@@ -370,6 +370,12 @@ public class DatabaseOperator {
             stmt.setString(2, uid1);
             stmt.setString(3, uid2);
             stmt.executeUpdate();
+
+            sql = "INSERT INTO messages (cid, sid, content) VALUES (?, ?, ?);";
+            stmt = databaseConnector.getConnection().prepareStatement(sql);
+            stmt.setString(1, cid);
+            stmt.setString(2, uid1);
+            stmt.setString(3, "Hello! This is the start point of our chat~!");
             return cid;
         } catch (SQLException e) {
             e.printStackTrace();
