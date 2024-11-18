@@ -143,6 +143,7 @@ public class DatabaseOperator {
         try (PreparedStatement stmt = databaseConnector.getConnection().prepareStatement(sql)) {
             stmt.setString(1, uid);
             stmt.setString(2, uid);
+            stmt.setString(3, uid);
 
             try (ResultSet resultSet = stmt.executeQuery()) {
                 while (resultSet.next()) {

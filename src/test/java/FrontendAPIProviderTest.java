@@ -36,7 +36,7 @@ public class FrontendAPIProviderTest {
 //        testGetAllMessages(uid_rokidna,uid_tekon);
 //        testGetLatestMessage(uid_rokidna,uid_tekon);
         testGetFriendRequestList("13365bd6-f13e-4572-8e3b-68bfb15172e5");
-//        testGetUserFriendList("13365bd6-f13e-4572-8e3b-68bfb15172e5");
+        testGetUserFriendList("13365bd6-f13e-4572-8e3b-68bfb15172e5");
 //        testLogin("Rokidna@gnetwork.com", "password123");
     }
 
@@ -45,6 +45,7 @@ public class FrontendAPIProviderTest {
         sleep(1000);
         System.out.println("Friend Request List: " + client.request_friendList);
     }
+
 //
 //    private void testGetConversationIDByID(String uidRokidna, String uidTekon) throws InterruptedException {
 //        client.getConversationIDByID(uidRokidna,uidTekon);
