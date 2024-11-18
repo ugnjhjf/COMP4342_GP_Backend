@@ -129,7 +129,7 @@ public class DatabaseOperator {
     }
 
     public JSONArray checkUserFriendlist(String uid) throws SQLException {
-        String sql = "SELECT DISTINCT user.uname, user.uid, friendlist.fid " +
+        String sql = "SELECT DISTINCT user.uname, user.uid, user,email, friendlist.fid " +
                 "FROM friendlist " +
                 "JOIN user ON ( " +
                 "    (friendlist.uid = ? AND friendlist.fid = user.uid) " +
@@ -150,6 +150,7 @@ public class DatabaseOperator {
                     String friendUid = resultSet.getString("uid");
                     String friendFid = resultSet.getString("fid");
                     String uname = resultSet.getString("uname");
+                    String email = resultSet.getString("email");
 
                     // 判断是否为 uid 还是 fid，并获取对话 ID 和在线状态
                     String friendId = uid.equals(friendUid) ? friendFid : friendUid;
@@ -159,6 +160,7 @@ public class DatabaseOperator {
                     // 将好友信息、cid 和在线状态填入 JSON 对象
                     friend.put("fid", friendId);
                     friend.put("uname", uname);
+                    friend.put("email", email);
                     friend.put("cid", cid);
                     friend.put("isOnline", isOnline);
 
