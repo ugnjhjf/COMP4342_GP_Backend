@@ -133,7 +133,7 @@ public class DatabaseOperator {
                 "SELECT user.uname, user.uid, friendlist.status,user.email  " +
                 "FROM friendlist JOIN user ON friendlist.fid = user.uid " +
                 "WHERE ((friendlist.fid = ?) OR " +
-                "(friendlist.uid = ? ))AND friendlist.status = 'requested';";
+                "(friendlist.uid = ? ))AND friendlist.status = 'accepted';";
         JSONArray friendsList = new JSONArray();
 
         try (PreparedStatement stmt = databaseConnector.getConnection().prepareStatement(sql)) {
