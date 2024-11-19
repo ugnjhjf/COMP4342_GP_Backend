@@ -14,11 +14,13 @@ CREATE TABLE conversations (
                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE user_conversations (
-                                    uid VARCHAR(50),
+                                    uid1 VARCHAR(50),
+                                    uid2 VARCHAR(50),
                                     cid VARCHAR(36),
                                     role ENUM('member', 'admin') DEFAULT 'member',
-                                    PRIMARY KEY (uid, cid),
-                                    FOREIGN KEY (uid) REFERENCES user(uid) ON DELETE CASCADE,
+                                    PRIMARY KEY (uid1, cid),
+                                    FOREIGN KEY (uid1) REFERENCES user(uid) ON DELETE CASCADE,
+                                    FOREIGN KEY (uid2) REFERENCES user(uid) ON DELETE CASCADE,
                                     FOREIGN KEY (cid) REFERENCES conversations(cid) ON DELETE CASCADE
 );
 

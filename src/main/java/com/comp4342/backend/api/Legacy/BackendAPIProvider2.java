@@ -1,9 +1,9 @@
-package comp4342.backend.api;
+package com.comp4342.backend.api.Legacy;
 
+import com.comp4342.backend.database.DatabaseOperator;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
-import comp4342.backend.database.DatabaseOperator;
 import org.json.JSONObject;
 
 
@@ -13,11 +13,11 @@ import java.net.InetSocketAddress;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class BackendAPIProvider {
+public class BackendAPIProvider2 {
     private final DatabaseOperator dbOperator;
     private ResultSet resultSet;
 
-    public BackendAPIProvider() throws ClassNotFoundException {
+    public BackendAPIProvider2() throws ClassNotFoundException {
         this.dbOperator = new DatabaseOperator();
 
     }
@@ -42,7 +42,7 @@ public class BackendAPIProvider {
                     JSONObject requestBody = new JSONObject(new String(exchange.getRequestBody().readAllBytes()));
                     String uid = requestBody.getString("uid");
 
-                    JSONObject userInfo = dbOperator.checkUserInfo(uid);  // 获取用户信息
+                    JSONObject userInfo = dbOperator.checkUserInfoByUID(uid);  // 获取用户信息
 
                     JSONObject response = new JSONObject();
                     if (userInfo != null) {
@@ -121,7 +121,7 @@ private void sendResponse(HttpExchange exchange, String response) throws IOExcep
     }
 
     public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException {
-        BackendAPIProvider apiProvider = new BackendAPIProvider();
+        BackendAPIProvider2 apiProvider = new BackendAPIProvider2();
         apiProvider.startServer();
     }
 }
