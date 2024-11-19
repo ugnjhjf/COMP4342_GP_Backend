@@ -1,2 +1,6 @@
 # COMP4342_GP_Backend
-Mobile Computing Android App Development, Backend Database
+COMP4342 Mobile Computing Android App, ChatNexus, Backend Database
+
+Due on 22, November 2024.
+
+Develop with Tekon.
