@@ -204,6 +204,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         JSONArray friendList = databaseOperator.checkUserFriendlist(uid);
         JSONObject response = new JSONObject();
         response.put("action", "getUserFriendList");
+        response.put("success", true);
         response.put("friendList", friendList);
         return response;
     }
@@ -213,6 +214,7 @@ public class BackendAPIProvider extends TextWebSocketHandler implements WebSocke
         JSONObject response = new JSONObject();
         System.out.println("friendList: " + friendList);
         response.put("action", "getFriendRequestList");
+        response.put("success", true);
         response.put("request_friendList", friendList);
         return response;
     }
