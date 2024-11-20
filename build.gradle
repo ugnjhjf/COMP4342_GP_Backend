@@ -21,13 +21,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.java-websocket:Java-WebSocket:1.5.2'
 
-
     // 可选：添加 Lombok（如果想简化 Java 代码）
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
     // 测试依赖
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
 application {
@@ -40,4 +41,8 @@ sourceSets {
             srcDirs = ['src/main/java']
         }
     }
+}
+
+test {
+    useJUnitPlatform()
 }

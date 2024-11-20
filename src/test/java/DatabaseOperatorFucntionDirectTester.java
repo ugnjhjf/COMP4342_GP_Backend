@@ -1,4 +1,5 @@
 import com.comp4342.backend.database.DatabaseOperator;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
@@ -7,6 +8,8 @@ public class DatabaseOperatorFucntionDirectTester {
     public static DatabaseOperator databaseOperator;
     private static String uid_rokidna = "d96f962d-f8c0-4c8f-b986-b87e9c877462"; //rokidna
     private static String uid_echidna = "1ac162a4-5a24-4058-a3de-5eb0d639a3fb";
+    private static String uid_mojicaa = "63346ffe-0ace-4b8a-8594-ac17057082c2";
+
     private static String result;
 
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
@@ -14,17 +17,28 @@ public class DatabaseOperatorFucntionDirectTester {
 //        testinsertRegisterUser();
 //        testlogin();
 //        testcheckUserInfoByUID();
-        testcheckUserInfoByEmail();
-
-        try {
-//            testInsertNewFriend();
-            testUpdateFriendRequest();
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
+//        testcheckUserInfoByEmail();
+//        testCheckUserIsOnline();
+//        testInsertNewFriend();
+//        testCheckUserFriendlist();
+        testinsertNewFriend();
+        testcheckFriendRequestList();
+//        testinsertStartNewConversation();
+//        try {
+////            testInsertNewFriend();
+//            testUpdateFriendRequest();
+//        }catch (SQLException e){
+//            e.printStackTrace();
+//        }
 //        testinsertStartNewConversation();
 //        testSelectExistConversation();
 //        testChangeName();
+    }
+    public static void testinsertNewFriend() throws SQLException {
+        String uid = databaseOperator.checkUserInfoByUID("7b2442e6-ae95-45f4-a2bf-c5a5b8051d6c").getString("uid"); ;
+        String fid = databaseOperator.checkUserInfoByUID("88025b94-3d23-4e19-93f6-d7e44f6e36cb").getString("uid");
+        boolean result = databaseOperator.insertNewFriend(uid, fid, "requested");
+        System.out.println("Insert result: " + result);
     }
     public static void testcheckUserInfoByEmail() throws SQLException {
         JSONObject resultJSON = databaseOperator.checkUserInfoByEmail("monika@uvuv.com");
@@ -40,32 +54,38 @@ public class DatabaseOperatorFucntionDirectTester {
         }
     }
     public static void testInsertNewFriend() throws SQLException {
-        String uid = databaseOperator.checkUserInfoByUID(uid_rokidna).getString("uid"); ;
-        String fid = databaseOperator.checkUserInfoByUID(uid_echidna).getString("uid");
+        String uid = databaseOperator.checkUserInfoByUID(uid_mojicaa).getString("uid"); ;
+        String fid = databaseOperator.checkUserInfoByUID(uid_rokidna).getString("uid");
         boolean result = databaseOperator.insertNewFriend(uid, fid, "requested");
         System.out.println("Insert result: " + result);
     }
 
     public static void testUpdateFriendRequest() throws SQLException {
-        String uid = databaseOperator.checkUserInfoByUID(uid_rokidna).getString("uid"); ;
-        String fid = databaseOperator.checkUserInfoByUID(uid_echidna).getString("uid");
+        String uid = databaseOperator.checkUserInfoByUID(uid_mojicaa).getString("uid"); ;
+        String fid = databaseOperator.checkUserInfoByUID(uid_rokidna).getString("uid");
         boolean result = databaseOperator.updateFriendRequest(uid, fid, "accepted");
         System.out.println("Update result: " + result);
     }
 
     public static void testinsertRegisterUser() {
-            String uname = "rokidna" ;
-            String email = "rokidna@gmail.com";
-            String password = "123456";
+            String uname = "mojicaa" ;
+            String email = "mojicaaa@gmail.com";
+            String password = "123456a";
             boolean result = databaseOperator.insertRegister(uname, email, password);
             System.out.println("Insert result: " + result);
 
-             uname = "kurumi" ;
-             email = "kurumi@gmail.com";
-             password = "123456";
-             result = databaseOperator.insertRegister(uname, email, password);
-            System.out.println("Insert result: " + result);
+    }
 
+    public static void testCheckUserIsOnline() throws SQLException {
+       boolean result = databaseOperator.checkUserIsOnline(uid_rokidna);
+        System.out.println("Check result: " + result);
+    }
+
+    public static void testCheckUserFriendlist() throws SQLException {
+        JSONArray resultJSON = databaseOperator.checkUserFriendlist(uid_rokidna);
+        if (resultJSON != null) {
+            System.out.println(resultJSON.toString());
+        }
     }
 
     
@@ -77,29 +97,26 @@ public class DatabaseOperatorFucntionDirectTester {
 //        System.out.println("Change result: "+resultJSON2);
 //    }
     public static void testlogin() throws SQLException{
-        JSONObject resultJSON = databaseOperator.login("rokidna@gmail.com","123456");
-        if (resultJSON.getBoolean("isLogonSucessful")){
-            System.out.println("Hello!"+resultJSON.getString("uname"));
+        boolean result = databaseOperator.login("rokidna@gmail.com","123456");
+        if (result){
+            System.out.println("Hello!");
         }else{
             System.out.println("Incorrect password / User not exist");
         }
     }
+    public static void testcheckFriendRequestList()throws SQLException{
+        JSONArray resultJSON = databaseOperator.checkFriendRequestList("7b2442e6-ae95-45f4-a2bf-c5a5b8051d6c");
+        if (resultJSON != null) {
+            System.out.println(resultJSON.toString());
+        }
+    }
 
-
-    public static void testinsertStartNewConversation() throws SQLException {
+    public static void testinsertStartNewConversationByEmail() throws SQLException {
         String uid1 = uid_echidna;
-        String uid2 = uid_rokidna;
-        String result = databaseOperator.insertStartNewConversation(uid1, uid2);
+        String uid2 = uid_mojicaa;
+        String result = databaseOperator.checkConversationIDByEmail(uid1, uid2);
         System.out.println("New Conversation ID: " + result);
     }
 
-    public static void testSelectExistConversation() throws SQLException {
-        String uid1 = uid_echidna;
-        String uid2 = uid_rokidna;
-        String result = databaseOperator.selectExistConversation(uid1,uid2);
-
-        System.out.println("Conversation ID: " + result);
-
-    }
 }
 
